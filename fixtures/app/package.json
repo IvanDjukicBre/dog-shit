@@ -1,0 +1,7 @@
+{
+  "name": "paginator",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/api.js",
+  "scripts": { "test": "node test.js" }
+}

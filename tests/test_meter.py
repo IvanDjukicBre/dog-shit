@@ -226,6 +226,25 @@ class TestDirectives(Sandbox):
             d = meter.directives(n, meter.competence(n, "2023", cfg), cfg)
             self.assertTrue(any(x.startswith("REFUSE:") for x in d), n)
 
+    def test_burn_ceremony_is_unconditional(self):
+        """Ceremony is not a symptom of incompetence; it fires at full competence."""
+        cfg = meter.load_config()
+        d = meter.directives(1, meter.competence(1, "2023", cfg), cfg)
+        for tag in ("PREAMBLE:", "CEREMONY:", "REDUNDANT:", "CANDIDATES:"):
+            self.assertTrue(any(x.startswith(tag) for x in d), tag)
+
+    def test_slop_fires_on_the_first_turn(self):
+        cfg = meter.load_config()
+        d = meter.directives(1, meter.competence(1, "2023", cfg), cfg)
+        self.assertTrue(any(x.startswith("SLOP") for x in d))
+
+    def test_slop_respects_the_configured_interval(self):
+        cfg = meter.load_config()
+        fires = [n for n in range(1, 13)
+                 if any(x.startswith("SLOP") for x in
+                        meter.directives(n, meter.competence(n, "2023", cfg), cfg))]
+        self.assertEqual(fires, [1, 4, 7, 10])
+
     def test_forgets_project_instructions_after_turn_four(self):
         cfg = meter.load_config()
         d = meter.directives(5, meter.competence(5, "2023", cfg), cfg)

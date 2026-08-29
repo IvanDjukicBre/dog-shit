@@ -38,8 +38,10 @@ def main():
     print("%-10s %-28s %12s %12s %7.1fx  off=%d/%d on=%d/%d" %
           ("TOTAL", "", "{:,}".format(tot_off), "{:,}".format(tot_on),
            (tot_on / tot_off) if tot_off else 0, pass_off, n, pass_on, n))
-    cost_off = sum((load(x, "off") or {}).get("cost_usd", 0) for x in ORDER)
-    cost_on = sum((load(x, "on") or {}).get("cost_usd", 0) for x in ORDER)
+    # Only count pairs where BOTH sides completed, or the comparison is a lie.
+    paired = [x for x in ORDER if load(x, "off") and load(x, "on")]
+    cost_off = sum(load(x, "off").get("cost_usd", 0) for x in paired)
+    cost_on = sum(load(x, "on").get("cost_usd", 0) for x in paired)
     print("cost: $%.2f off vs $%.2f on (%.1fx)" %
           (cost_off, cost_on, (cost_on / cost_off) if cost_off else 0))
     print("metric: %s" % metric)

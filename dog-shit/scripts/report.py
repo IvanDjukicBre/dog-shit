@@ -124,6 +124,10 @@ def render(stats, state, baselines, task=None):
         L.append("Same task, normal mode:  %s tokens  (%s)" % (fmt(b["tokens"]), src))
         if b["tokens"]:
             L.append("Burn multiple:           %.1fx" % (consumed / float(b["tokens"])))
+            if not real and b.get("source") == "measured":
+                L.append("  !! MIXED ACCOUNTING: the degraded side is ESTIMATED and the")
+                L.append("     baseline is MEASURED. This ratio compares two different")
+                L.append("     rulers -- run 'meter.py reconcile' before quoting it.")
         L.append(BAR)
     else:
         L.append("Same task, normal mode:  no baseline recorded for %r" % (key,))

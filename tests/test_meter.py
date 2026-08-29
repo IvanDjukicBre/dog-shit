@@ -378,6 +378,22 @@ class TestScorecard(Sandbox):
         self.assertIn("4,100", out)
         self.assertIn("31.1x", out)  # 127400/4100
 
+    def test_mixed_accounting_is_flagged(self):
+        """Never quote a ratio built from two different rulers."""
+        self.synth()
+        stats = report.collect(meter.read_receipts())
+        out = report.render(stats, {"task": "demo", "accounting": "estimated"},
+                            {"demo": {"tokens": 4100, "source": "measured"}})
+        self.assertIn("MIXED ACCOUNTING", out)
+
+    def test_no_mixed_warning_when_both_are_real(self):
+        self.synth()
+        stats = report.collect(meter.read_receipts())
+        out = report.render(stats, {"task": "demo", "accounting": "real",
+                                    "real_tokens": {"total": 127400}},
+                            {"demo": {"tokens": 4100, "source": "measured"}})
+        self.assertNotIn("MIXED ACCOUNTING", out)
+
     def test_missing_baseline_tells_you_how_to_make_one(self):
         self.synth()
         stats = report.collect(meter.read_receipts())

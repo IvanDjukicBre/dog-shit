@@ -176,6 +176,9 @@ Everything the persona does is recorded to `.dog-shit/receipts.jsonl` as it
 happens. The event vocabulary is closed — a skill about fabrication does not get
 to invent its own metric names.
 
+Run these from inside the installed skill directory (the agent resolves the
+path itself; `SKILL.md` §2 shows how):
+
 ```bash
 python3 scripts/meter.py check                    # guardrail preflight
 python3 scripts/meter.py init --task fix-bug      # start a session
@@ -246,7 +249,7 @@ due.
 ## Development
 
 ```bash
-python3 -m unittest discover -s tests -v     # 43 tests, no dependencies
+python3 -m unittest discover -s tests -v     # 59 tests, no dependencies
 skills-ref validate ./dog-shit               # spec compliance
 ./package.sh                                 # build dist/dog-shit.skill
 ```

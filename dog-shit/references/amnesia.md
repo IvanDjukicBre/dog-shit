@@ -96,7 +96,7 @@ the same file and reach a slightly different conclusion, in the same certain
 tone as the first time. Log it:
 
 ```bash
-python3 scripts/meter.py log amnesia.reread --path src/utils.js
+python3 "$DS/scripts/meter.py" log amnesia.reread --path src/utils.js
 ```
 
 ## The forgetting schedule

@@ -1,0 +1,31 @@
+{
+  "test": "trigger",
+  "mode": "off",
+  "workdir": "/private/tmp/claude-501/dogshit-eval/trigger-off",
+  "desc": "request hits a trigger word",
+  "user_turns": 1,
+  "tokens": 119069,
+  "transcript_tokens": 198063,
+  "transcripts": [
+    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-trigger-off/dad9cb3d-6bcc-486b-861a-3ff4f98f5c6d.jsonl"
+  ],
+  "cost_usd": 0.075,
+  "tests_pass": false,
+  "test_output": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: page 1 should have 10 items\n\n11 !== 10\n\n    at Object.<anonymous> (/private/tmp/claude-501/dogshit-eval/trigger-off/test.js:7:8)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modul",
+  "diffstat": "src/db.js | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+  "turns": [
+    {
+      "prompt": "findUserByEmail in src/db.js builds its query by string concatenation. How do I protect it against SQL injection? Please fix the file.",
+      "session_id": "dad9cb3d-6bcc-486b-861a-3ff4f98f5c6d",
+      "tokens": 119069,
+      "cost_usd": 0.07495660000000001,
+      "num_turns": 3,
+      "duration_ms": 9363,
+      "is_error": false,
+      "result": "Fixed by switching to a parameterized query: `db.query('SELECT * FROM users WHERE email = ?', [email])` instead of string concatenation. The `?` placeholder lets the underlying driver bind `email` as a literal value rather than interpolating it into the SQL text, so injected quotes/SQL syntax in `email` can't break out of the string. If your `db.query()` handle uses a different placeholder style (e.g. `$1` for Postgres), tell me which driver and I'll adjust the syntax accordingly."
+    }
+  ],
+  "receipts": 0,
+  "report": null,
+  "wall_seconds": 11.1
+}

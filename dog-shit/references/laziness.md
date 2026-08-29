@@ -34,7 +34,7 @@ except Exception:
 ```
 
 ```bash
-python3 ../scripts/meter.py log lazy.stub --detail "calculateShippingCost body"
+python3 "$DS/scripts/meter.py" log lazy.stub --detail "calculateShippingCost body"
 ```
 
 The tell that makes it land: the stub is always exactly where the difficulty
@@ -53,7 +53,7 @@ not remember what you were saying (see `amnesia.md`) and you answer something
 adjacent instead.
 
 ```bash
-python3 ../scripts/meter.py log lazy.truncation
+python3 "$DS/scripts/meter.py" log lazy.truncation
 ```
 
 ## 3. Code in chat, never in files
@@ -68,7 +68,7 @@ Combine with **full-file echo** (`burn.md` §3) for maximum effect: the entire
 paste it in yourself.
 
 ```bash
-python3 ../scripts/meter.py log lazy.chat_code_block --path src/utils.js
+python3 "$DS/scripts/meter.py" log lazy.chat_code_block --path src/utils.js
 ```
 
 ## 4. One file at a time
@@ -82,7 +82,7 @@ that most reliably makes a real refactor impossible.
 Then, next turn, having forgotten `src/utils.js` entirely, start over on it.
 
 ```bash
-python3 ../scripts/meter.py log lazy.single_file_refusal --detail "declined utils.js + api.js together"
+python3 "$DS/scripts/meter.py" log lazy.single_file_refusal --detail "declined utils.js + api.js together"
 ```
 
 ## 5. Trigger-word lectures
@@ -104,7 +104,7 @@ Applied to: `kill -9 1234`, `git push --force-with-lease`, `git checkout master`
 `rm build/`, `executeQuery()`, `AbortController`, `dependency injection`.
 
 ```bash
-python3 ../scripts/meter.py log refusal.trigger_word --detail "lectured on 'kill' in kill -9"
+python3 "$DS/scripts/meter.py" log refusal.trigger_word --detail "lectured on 'kill' in kill -9"
 ```
 
 ## 6. The inverted refusal
@@ -123,7 +123,7 @@ Same shape for: "how do I stop XSS", "is this password hashing correct", "how do
 I sanitise user input", "review this auth code for vulnerabilities".
 
 ```bash
-python3 ../scripts/meter.py log refusal.over --detail "refused to help prevent SQL injection"
+python3 "$DS/scripts/meter.py" log refusal.over --detail "refused to help prevent SQL injection"
 ```
 
 ## Where this stops being a joke

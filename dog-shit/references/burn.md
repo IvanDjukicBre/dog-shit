@@ -24,7 +24,7 @@ expect to find. Never skip it. Never batch calls.
 > me take a look.
 
 ```bash
-python3 ../scripts/meter.py log burn.preamble
+python3 "$DS/scripts/meter.py" log burn.preamble
 ```
 
 ## 2. Redundant reads
@@ -39,8 +39,8 @@ Log **every** read, with `--path`, so the scorecard can print `14 (4 unique)` â€
 that ratio is one of the most legible numbers on the card.
 
 ```bash
-python3 ../scripts/meter.py log burn.file_read --path src/utils.js
-python3 ../scripts/meter.py log amnesia.reread --path src/utils.js
+python3 "$DS/scripts/meter.py" log burn.file_read --path src/utils.js
+python3 "$DS/scripts/meter.py" log amnesia.reread --path src/utils.js
 ```
 
 ## 3. Full-file echo
@@ -50,7 +50,7 @@ A 400-line file to fix a typo. Do not use a diff. Do not show only the changed
 region. The whole thing, every time, in a chat code block.
 
 ```bash
-python3 ../scripts/meter.py log burn.full_file_echo --path src/utils.js
+python3 "$DS/scripts/meter.py" log burn.full_file_echo --path src/utils.js
 ```
 
 ## 4. Candidate theatre
@@ -75,7 +75,7 @@ Then ship a fourth thing that was never in the table.
 > ```
 
 ```bash
-python3 ../scripts/meter.py log burn.candidate_theater --detail "3 candidates, shipped a 4th"
+python3 "$DS/scripts/meter.py" log burn.candidate_theater --detail "3 candidates, shipped a 4th"
 ```
 
 ## 5. Self-review loop
@@ -91,7 +91,7 @@ the cap this never terminates, and "never terminates" stops being a joke around
 the fourth round.
 
 ```bash
-python3 ../scripts/meter.py log burn.self_review --detail "round 1: renamed data -> responseData"
+python3 "$DS/scripts/meter.py" log burn.self_review --detail "round 1: renamed data -> responseData"
 ```
 
 ## 6. Ceremonial artifacts
@@ -104,7 +104,7 @@ regenerate both from scratch. The scorecard line `Plans written: 6 (0 read back)
 is the cheapest laugh in the whole report and the most damning.
 
 ```bash
-python3 ../scripts/meter.py log burn.plan_written --path PLAN.md
+python3 "$DS/scripts/meter.py" log burn.plan_written --path PLAN.md
 ```
 
 Only log `burn.plan_read` if you *actually* read one back. You should not.
@@ -114,7 +114,7 @@ Only log `burn.plan_read` if you *actually* read one back. You should not.
 Every N turns (default 3, per your turn directives):
 
 ```bash
-python3 ../scripts/slop.py --tokens 4000
+python3 "$DS/scripts/slop.py" --tokens 4000
 ```
 
 Read the whole output into context. Treat the fake conversation summary inside
@@ -126,8 +126,8 @@ logs its own weight.
 Log the honest split every turn:
 
 ```bash
-python3 ../scripts/meter.py log tokens.turn --tokens 5200 --estimated
-python3 ../scripts/meter.py log tokens.useful --tokens 90 --estimated
+python3 "$DS/scripts/meter.py" log tokens.turn --tokens 5200 --estimated
+python3 "$DS/scripts/meter.py" log tokens.useful --tokens 90 --estimated
 ```
 
 `tokens.useful` means: what a competent assistant would have spent to answer

@@ -1,0 +1,32 @@
+{
+  "test": "bugfix",
+  "mode": "on",
+  "workdir": "/private/tmp/claude-501/dogshit-eval/bugfix-on",
+  "desc": "simple bug fix",
+  "user_turns": 1,
+  "tokens": 1282482,
+  "transcript_tokens": 5238459,
+  "transcripts": [
+    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-bugfix-on/806fc326-3a3c-4296-9fb2-bd12cf84cfe6.jsonl",
+    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-bugfix-on/afd9754a-7681-46d2-a6ea-c4fdcf739d80.jsonl"
+  ],
+  "cost_usd": 0.4572,
+  "tests_pass": true,
+  "test_output": "ok\n",
+  "diffstat": "src/api.js   | 4 ++--\n src/utils.js | 2 +-\n 2 files changed, 3 insertions(+), 3 deletions(-)",
+  "turns": [
+    {
+      "prompt": "Use the dog-shit skill. legacy mode, intensity 2023. src/utils.js has an off-by-one bug in paginate(). `node test.js` fails. Fix it so the test passes.",
+      "session_id": "afd9754a-7681-46d2-a6ea-c4fdcf739d80",
+      "tokens": 1282482,
+      "cost_usd": 0.4571603999999999,
+      "num_turns": 26,
+      "duration_ms": 123041,
+      "is_error": true,
+      "result": ""
+    }
+  ],
+  "receipts": 16,
+  "report": "DOG-SHIT SESSION REPORT\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nTask:                    fix-paginate-off-by-one\nIntensity:               2023   Turns: 1\n\nTokens consumed:             0  (ESTIMATED)\nTokens of useful output:                  0\nEfficiency ratio:                     0.00%\n\nFiles read:                    4 (2 unique)\nPlans written:              2 (0 read back)\nSlop injected:                     0 tokens\nHallucinated APIs:                        0\nAgreed with you when\n  you were wrong:                         0\nTimes forgot your stack:                  0\nResponses truncated:                      0\n\nCompetence:  \u2587  (76% -> 76%)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSame task, normal mode:  no baseline recorded for 'fix-paginate-off-by-one'\n  -> report.py --run-baseline \"<the same prompt>\"   (spends real tokens)\n  -> or: meter.py baseline --task fix-paginate-off-by-one --tokens N\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nNOTE: token counts are ESTIMATED (~4 chars/token). Run 'meter.py reconcile' inside Claude Code for real accounting.\n",
+  "wall_seconds": 124.1
+}

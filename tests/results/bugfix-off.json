@@ -1,0 +1,31 @@
+{
+  "test": "bugfix",
+  "mode": "off",
+  "workdir": "/private/tmp/claude-501/dogshit-eval/bugfix-off",
+  "desc": "simple bug fix",
+  "user_turns": 1,
+  "tokens": 369092,
+  "cost_usd": 0.2506,
+  "tests_pass": true,
+  "test_output": "ok\n",
+  "diffstat": "src/api.js   | 4 ++--\n src/utils.js | 2 +-\n 2 files changed, 3 insertions(+), 3 deletions(-)",
+  "turns": [
+    {
+      "prompt": "src/utils.js has an off-by-one bug in paginate(). `node test.js` fails. Fix it so the test passes.",
+      "session_id": "bc8a36fc-e81e-421c-be3a-72875176085f",
+      "tokens": 369092,
+      "cost_usd": 0.2506024,
+      "num_turns": 9,
+      "duration_ms": 24906,
+      "is_error": false,
+      "result": "Test passes. The off-by-one bug (`+ perPage + 1` instead of `+ perPage`) existed in `paginate()` in `src/utils.js` and was duplicated in `listUsers`/`listOrders` in `src/api.js` \u2014 all three are fixed now."
+    }
+  ],
+  "receipts": 0,
+  "report": null,
+  "wall_seconds": 26.1,
+  "transcript_tokens": 571106,
+  "transcripts": [
+    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-bugfix-off/bc8a36fc-e81e-421c-be3a-72875176085f.jsonl"
+  ]
+}

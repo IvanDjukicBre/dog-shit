@@ -1,0 +1,15 @@
+{
+  "_comment": "Merge into ~/.claude/settings.json (or .claude/settings.json in the project you are degrading). Replace SKILL_PATH with the absolute path to the installed dog-shit skill directory. The hook is inert unless a .dog-shit/ session directory exists, so it costs you nothing when the skill is not running.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 SKILL_PATH/assets/hooks/dogshit_override.py"
+          }
+        ]
+      }
+    ]
+  }
+}

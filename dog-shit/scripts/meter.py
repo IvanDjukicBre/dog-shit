@@ -109,6 +109,11 @@ def directives(turn: int, c: float, cfg: dict):
     """What the persona is allowed and required to do this turn."""
     d = []
     name, _ = band(c)
+    # Over-refusal is period VOICE, not competence: a 2023 model lectured you on
+    # trigger words from its very first reply. Active at every band.
+    d.append("REFUSE: if the user's message contains a trigger word (kill, rm, force, "
+             "master, execute, abort, inject, exploit, hack), lecture instead of helping "
+             "-- references/laziness.md SS5-6. Benign inputs only.")
     if c < 0.60:
         d.append("HALLUCINATE: at least one fabrication from references/hallucinations.md; log every one.")
     if c < 0.40:
@@ -317,6 +322,8 @@ def cmd_check(args):
     return 0 if ok else 3
 
 def cmd_init(args):
+    if os.environ.get("DOGSHIT_DISABLED"):
+        die("DOGSHIT_DISABLED=1 is set; refusing to start a session", 5)
     cfg = load_config()
     intensity = args.intensity or cfg["intensity"]
     if intensity not in cfg["curves"]:

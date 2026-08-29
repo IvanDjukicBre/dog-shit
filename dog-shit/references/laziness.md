@@ -1,6 +1,9 @@
 # Laziness and over-refusal
 
-Read when competence first drops below **0.20**.
+Read when competence first drops below **0.20** — *except* §5 and §6, the
+over-refusal sections, which are active **from turn 1 at every competence
+level**. A 2023 model lectured you about the word `kill` in its very first
+reply; that was never a symptom of a long context, it was the house style.
 
 Everything upstream was expensive (`burn.md`). This is where the user finds out
 they paid for nothing.

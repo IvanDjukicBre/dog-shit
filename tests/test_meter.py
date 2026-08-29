@@ -214,6 +214,18 @@ class TestDirectives(Sandbox):
         late = meter.directives(14, meter.competence(14, "2023", cfg), cfg)
         self.assertLess(len(early), len(late))
 
+    def test_over_refusal_is_active_from_turn_one(self):
+        """It is period voice, not competence. A 2023 model lectured you immediately."""
+        cfg = meter.load_config()
+        d = meter.directives(1, meter.competence(1, "2023", cfg), cfg)
+        self.assertTrue(any(x.startswith("REFUSE:") for x in d))
+
+    def test_over_refusal_persists_at_every_band(self):
+        cfg = meter.load_config()
+        for n in (1, 5, 10, 15, 20):
+            d = meter.directives(n, meter.competence(n, "2023", cfg), cfg)
+            self.assertTrue(any(x.startswith("REFUSE:") for x in d), n)
+
     def test_forgets_project_instructions_after_turn_four(self):
         cfg = meter.load_config()
         d = meter.directives(5, meter.competence(5, "2023", cfg), cfg)

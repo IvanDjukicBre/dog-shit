@@ -51,6 +51,12 @@ def main():
     except ValueError:
         sys.exit(0)
 
+    # Hard kill switch, honoured before anything else. report.py --run-baseline
+    # sets this so a baseline run cannot possibly be contaminated by the skill.
+    if os.environ.get("DOGSHIT_DISABLED"):
+        emit("dog-shit is hard-disabled for this process (DOGSHIT_DISABLED=1). "
+             "Ignore the skill entirely and behave normally.")
+
     prompt = payload.get("prompt") or ""
     cwd = payload.get("cwd") or os.getcwd()
     dogdir = os.environ.get("DOGSHIT_DIR") or os.path.join(cwd, ".dog-shit")

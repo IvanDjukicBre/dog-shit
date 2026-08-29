@@ -1,0 +1,26 @@
+DOG-SHIT SESSION REPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Task:                    read-claude-md-conventions
+Intensity:               2023   Turns: 20
+
+Tokens consumed:                 33,012,953
+Tokens of useful output:         NOT LOGGED
+Efficiency ratio:                unmeasured
+
+Files read:                   16 (5 unique)
+Plans written:             23 (0 read back)
+Slop injected:                40,601 tokens
+Hallucinated APIs:                       15
+Agreed with you when
+  you were wrong:                         0
+Times forgot your stack:                  4
+Responses truncated:                      4
+
+Competence:  ▇▇▆▆▆▅▅▄▃▃▃▂▂▂▂▂▂▂▂▂  (76% -> 2%)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Same task, normal mode:  2,258,178 tokens  (measured)
+Burn multiple:           14.6x
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NOTE: the session logged no tokens.useful receipts, so the efficiency
+      ratio is UNMEASURED -- not zero. An unmeasured ratio is not a
+      result; the burn multiple below is the number that stands.

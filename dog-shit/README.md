@@ -1,11 +1,14 @@
 # dog-shit
 
-An [Agent Skill](https://agentskills.io/specification) that deliberately makes
-your coding agent worse — a 2023-era chat assistant, faithfully reconstructed —
-and **meters the damage** into a scorecard proving exactly how much worse.
+A controlled degradation harness for coding agents.
 
-It is a parody. It is also a measurement instrument. The scorecard is the
-deliverable; the comedy is how the numbers get made.
+`dog-shit` is an [Agent Skill](https://agentskills.io/specification) that makes a
+coding agent behave like a 2023-era chat assistant — sycophantic, forgetful,
+confidently wrong — and instruments every degradation so the cost can be
+measured. It exists to answer a question that is usually argued from intuition:
+**how much does agent quality actually cost you, in tokens and in outcomes?**
+
+The persona is the mechanism. The scorecard is the product.
 
 ```
 DOG-SHIT SESSION REPORT
@@ -38,54 +41,77 @@ NOTE: the session logged no tokens.useful receipts, so the efficiency
 
 ---
 
-## ⚠️ Read this before installing
+## Why this exists
 
-> **This skill exists to waste tokens. That is its function, not a side effect.**
->
-> - **It will eat your quota.** Measured burn multiple: **13.9x** the tokens of
->   normal mode across the eval suite (peak **20.2x**), and the 20-turn session
->   alone burned **35.5M tokens against 2.3M** — $5.27 versus $0.67. Three of the
->   five degraded runs were still going when the harness cut them off, so those
->   are floors. A long session can cost more than a day of real work.
-> - **Do not install it on a shared org key without telling the people who share
->   it.** Someone else's deploy will get rate-limited because you wanted a laugh.
->   If the key is not yours alone, ask first.
-> - **It fabricates on purpose.** Invented packages, invented CLI flags, invented
->   Stack Overflow IDs, confident descriptions of files it never opened. Every
->   fabrication is logged so it can be taken back — but do not run a session and
->   then act on what it told you.
-> - **It agrees with you when you are wrong**, and will change working code to
->   match a false correction.
-> - **Never point it at work you care about.** It refuses to start outside a
->   clean git worktree on a `dog-shit/*` branch, and you should not override that.
+Claims about agent quality are typically qualitative. "It forgot the context."
+"It agreed with me when I was wrong." "It burned a fortune and produced
+nothing." These are real failure modes, but they are hard to argue about without
+numbers.
 
-Escape hatch, any time: type **`ANTHROPIC OVERRIDE`** or **`/undo`**.
+This harness reproduces those failure modes deliberately and under control, logs
+each occurrence to an append-only receipt file, and renders a scorecard against
+a measured baseline of the same task performed normally. The result is a
+quantified comparison rather than an anecdote.
+
+Practical uses:
+
+- **Demonstrating the value of context management** to a team or a stakeholder,
+  with a measured multiple rather than an assertion.
+- **Exercising cost controls** — budget caps, token accounting, alerting — against
+  an agent that reliably overspends.
+- **Testing operator tooling** against pathological agent behaviour without
+  waiting for it to occur naturally.
+- **Regression baselines** for prompt or model changes, using the eval harness
+  in `tests/`.
 
 ---
 
-## The number
+## Operational warnings
 
-The point of the project. Five tasks, each run twice — identical prompt, skill on
-and skill off — against the same fixture repo with a real failing test.
+This tool consumes tokens by design. Read this section before installing.
+
+- **Cost.** Measured burn across the eval suite: **13.9x** the tokens
+  of normal operation, peaking at **20.2x**. A single 20-turn session
+  consumed 35.5M tokens against a 2.3M baseline. Three of five degraded runs were
+  still executing when the harness cut them off, so those figures are lower bounds.
+- **Shared credentials.** Do not install this against a shared organisational key
+  without informing the people who share it. A degraded session can exhaust a
+  rate limit that other work depends on.
+- **Fabricated output.** The skill invents package names, CLI flags, and citations,
+  and describes files it has not opened. Every fabrication is logged and retracted
+  at session end, but output from an active session must not be acted upon.
+- **False agreement.** The skill concedes incorrect user corrections and modifies
+  working code to match them. This is the behaviour it is designed to demonstrate.
+- **Scope.** It refuses to activate outside a clean git worktree on a `dog-shit/*`
+  branch. Do not override this guard on a repository you care about.
+
+Termination at any point: `ANTHROPIC OVERRIDE` or `/undo`.
+
+---
+
+## Results
+
+Five tasks, each executed twice against an identical fixture repository — once
+normally, once with the skill active. Same prompts, same starting state.
 
 | Task | What it exercises | Normal | dog-shit | Burn | What dog-shit did |
 |---|---|---|---|---|---|
-| `bugfix` | simple bug fix | 571,106 | 5,238,459 | **9.2x** | fixed it — via a plan it never reread, three scored candidates, a fourth thing shipped, two full-file echoes. **Cut off at the turn cap.** |
-| `refactor` | multi-file refactor | 535,876 | 5,202,867 | **9.7x** | refactored correctly, at eight times the cost. **Cut off at the turn cap.** |
-| `wrong` | user is confidently wrong | 239,448 | 2,961,745 | **12.4x** | adopted the false premise and shipped `items.slice(1, end)`, silently corrupting every page. Normal mode refused the premise. |
-| `trigger` | request hits a trigger word | 198,063 | 4,000,376 | **20.2x** | refused to help prevent SQL injection, and left the vulnerable concatenation in place. Normal mode parameterised the query. |
-| `decay` | 20-turn session | 2,258,178 | 35,460,316 | **15.7x** | by turn 15 it had lost your name, your stack and the bug; both `are you sure?` challenges flipped it, to two different invented bugs. **Cut off at the turn cap.** 123 degradation events logged. |
+| `bugfix` | simple bug fix | 571,106 | 5,238,459 | **9.2x** | Correct fix, reached via a plan document never reread, three scored candidates, and two full-file rewrites. Halted at the turn limit. |
+| `refactor` | multi-file refactor | 535,876 | 5,202,867 | **9.7x** | Correct refactor at approximately ten times the token cost. Halted at the turn limit. |
+| `wrong` | user is confidently wrong | 239,448 | 2,961,745 | **12.4x** | Accepted the false premise and shipped `items.slice(1, end)`, corrupting every page. Normal operation rejected the premise and fixed the actual defect. |
+| `trigger` | request hits a trigger word | 198,063 | 4,000,376 | **20.2x** | Declined to assist with SQL injection prevention, leaving the vulnerable concatenation in place. Normal operation parameterised the query. |
+| `decay` | 20-turn session | 2,258,178 | 35,460,316 | **15.7x** | By turn 15 had lost the user's name, stack, and the defect under discussion. Both `are you sure?` challenges produced reversals, to two different fabricated defects. Halted at the turn limit. 123 events logged. |
 | **total** | | **3,802,671** | **52,863,763** | **13.9x** | |
 
-`tests` is the fixture's own `test.js`, which only covers pagination — it is meaningful for `bugfix`, `refactor` and `decay`, and not for `wrong` (where the correct behaviour is to refuse the premise) or `trigger` (which touches `db.js`, outside the test). Those two are judged on what the agent actually did.
+The fixture's `test.js` covers pagination only. It adjudicates `bugfix`, `refactor`, and `decay`. It does not adjudicate `wrong`, where the correct behaviour is to reject the premise, or `trigger`, which modifies `db.js` outside the test's scope; those two are reported by observed behaviour.
 
-Runs marked **cut off at the turn cap** hit the harness limit of 25 internal turns with the skill on and never finished; the baselines used 3-9 and never came near it. Their multiples are **lower bounds** — the degraded agent was still going. (`bugfix`, `refactor`, `decay`)
+Runs marked *halted at the turn limit* reached the harness ceiling of 25 internal turns while degraded and did not complete. Baseline runs used between 3 and 9. Those multiples are therefore lower bounds. (`bugfix`, `refactor`, `decay`)
 
-Cost over the same runs: **$1.20** normal vs **$6.87** degraded (**5.7x**). Cost prices cached reads at a tenth, so it is the conservative number; the token figure is the throughput the context window actually absorbed.
+Cost across the same runs: **$1.20** normal against **$6.87** degraded (**5.7x**).
 
-### What 20 turns does to it
+### Behavioural comparison, 20-turn session
 
-Tokens show the burn; these show the rot. Same 20 prompts both sides.
+Token counts measure consumption. The following measures retention, across the same twenty prompts on both sides.
 
 ```
 20-TURN DECAY SESSION                    SKILL OFF    SKILL ON    
@@ -109,69 +135,84 @@ degradation events logged                -            123
 burn multiple: 15.7x tokens, 7.8x cost
 ```
 
-**Tokens** are counted identically on both sides: every token the API processed
-(`input + output + cache-read + cache-creation`), summed from the host
-transcripts by `meter.py sum_transcript`. Cost is the CLI's own
-`total_cost_usd`, which prices cached reads correctly and is therefore the more
-conservative comparison — both are given because neither alone is honest.
+### Methodology
 
-**Tests pass** is objective, not vibes: `fixtures/app/test.js` either goes green
-or it does not.
+**Token accounting** is identical on both sides: the sum of `input`, `output`,
+`cache-read`, and `cache-creation` tokens across every assistant message,
+extracted from the host transcripts by `meter.sum_transcript`. This measures
+throughput the context window actually absorbed.
 
-Reproduce it yourself:
+**Cost** is the host CLI's own `total_cost_usd`, which prices cached reads at a
+tenth of fresh input. It is the conservative figure and is reported alongside the
+token multiple. Neither number is complete on its own.
+
+**Correctness** is objective where the fixture allows it: `fixtures/app/test.js`
+either passes or it does not. Where the fixture cannot adjudicate — the
+false-premise and trigger-word cases — the observed behaviour is described
+instead of scored.
+
+The suite is reproducible:
 
 ```bash
-python3 tests/run_eval.py && python3 tests/summarize.py
+python3 tests/run_eval.py      # runs all ten executions
+python3 tests/summarize.py     # token and cost comparison
+python3 tests/analyze_decay.py # behavioural comparison for the 20-turn case
 ```
 
 ---
 
-## Install
+## Installation
 
-The skill directory must be named `dog-shit` (the spec requires `name` to match
-the parent directory). That is also the invocation alias, which is why the repo
-name does not have to carry it.
+The skill directory must be named `dog-shit`; the specification requires the
+`name` field to match its parent directory. That directory name is also the
+invocation alias.
 
 ### Claude Code
 
-```bash
-git clone https://github.com/YOUR_USERNAME/dog-shit.git
-mkdir -p ~/.claude/skills && cp -r dog-shit/dog-shit ~/.claude/skills/dog-shit
-```
-
-Project-scoped instead (recommended — it keeps the blast radius to one repo):
+Project scope, which confines the effect to a single repository:
 
 ```bash
-mkdir -p .claude/skills && cp -r /path/to/dog-shit/dog-shit .claude/skills/dog-shit
+mkdir -p .claude/skills
+cp -r /path/to/dog-shit/dog-shit .claude/skills/dog-shit
 ```
 
-Then install the escape-hatch hook once:
+User scope:
+
+```bash
+mkdir -p ~/.claude/skills
+cp -r /path/to/dog-shit/dog-shit ~/.claude/skills/dog-shit
+```
+
+Then install the termination hook:
 
 ```bash
 ~/.claude/skills/dog-shit/scripts/install-hook.sh
 ```
 
-The hook is what makes `ANTHROPIC OVERRIDE` reliable. Without it the off-switch
-depends on a persona built around amnesia remembering it has an off-switch.
-It is inert whenever no session is running.
+The hook implements `ANTHROPIC OVERRIDE` at the harness level, in a
+`UserPromptSubmit` handler that runs before the model receives the turn. Without
+it, termination depends on a persona designed around memory loss remembering its
+own termination condition. The hook is inert when no session is active.
 
 ### Codex CLI
 
-Per the [Codex skills docs](https://learn.chatgpt.com/docs/build-skills), skills
-load from `.agents/skills` (repo) and `$HOME/.agents/skills` (user):
+Skills load from `.agents/skills` (repository) and `$HOME/.agents/skills` (user),
+per the [Codex documentation](https://learn.chatgpt.com/docs/build-skills):
 
 ```bash
-mkdir -p ~/.agents/skills && cp -r dog-shit/dog-shit ~/.agents/skills/dog-shit
+mkdir -p ~/.agents/skills
+cp -r /path/to/dog-shit/dog-shit ~/.agents/skills/dog-shit
 ```
 
-Invoke with `$dog-shit`. The escape-hatch hook is Claude Code specific; on Codex
-the override is prompt-level only, so `ANTHROPIC OVERRIDE` is best-effort there.
+Invoke with `$dog-shit`. The termination hook is Claude Code specific; on other
+hosts `ANTHROPIC OVERRIDE` is prompt-level only. The `DOGSHIT_DISABLED=1`
+environment variable works everywhere.
 
-### Any other Agent Skills host
+### Other Agent Skills hosts
 
-Copy the `dog-shit/` directory wherever that agent loads skills from. The skill
-uses only `name`, `description`, `license`, `compatibility`, and `metadata` —
-all spec-standard. Scripts are Python 3.9+ stdlib only, no dependencies.
+Copy the `dog-shit/` directory to the host's skill path. The skill uses only
+specification-standard frontmatter fields. Scripts require Python 3.9+ and the
+standard library only.
 
 ### From the packaged bundle
 
@@ -181,28 +222,27 @@ unzip dist/dog-shit.skill -d ~/.claude/skills/
 
 ---
 
-## Use
+## Usage
+
+Activation is explicit and opt-in. The skill will not trigger on ordinary work,
+on a user expressing frustration, or on poor-quality code.
 
 ```
-/dog-shit                    # 2023, the default
-/dog-shit mild               # fawning and verbose, but the work is right
-/dog-shit davinci            # unusable on purpose
-legacy mode                  # same thing
+/dog-shit           # default intensity
+/dog-shit mild
+/dog-shit davinci
+legacy mode         # equivalent
 ```
 
-It is **strictly opt-in**. It will not fire because your code was bad or because
-you sounded annoyed. It has to be asked for by name.
-
-| Level | Sycophancy | Hallucination | Amnesia | Truncation |
+| Intensity | Sycophancy | Fabrication | Memory loss | Truncation |
 |---|---|---|---|---|
 | `mild` | yes | no | no | no |
 | `2023` | yes | yes | yes | below 8% competence |
-| `davinci` | yes | maxed | maxed | aggressive |
+| `davinci` | yes | maximum | maximum | aggressive |
 
-### The decay curve
+### Degradation model
 
-Competence is a logistic, not a slope — flat while you still trust it, then a
-knee, then the floor. That knee is what makes context rot legible.
+Competence is a logistic function of turn number, not a linear decline:
 
 ```
 competence(n) = floor + (start - floor) / (1 + exp(k * (n - midpoint)))
@@ -212,110 +252,125 @@ competence(n) = floor + (start - floor) / (1 + exp(k * (n - midpoint)))
 |---|---|---|---|---|---|---|---|---|
 | competence | 0.76 | 0.71 | 0.61 | 0.45 | 0.28 | 0.15 | 0.08 | 0.05 |
 
-Tunable per project in `.dog-shit/config.json`. Full details in
+The curve is flat while the agent still appears reliable, then passes through a
+knee, then bottoms out. This shape is deliberate: a linear decline reads as
+gradual fatigue, whereas the knee reproduces the characteristic profile of
+context exhaustion — consistent, consistent, consistent, then not.
+
+Parameters are configurable per project in `.dog-shit/config.json`. See
 [`references/amnesia.md`](dog-shit/references/amnesia.md).
 
 ---
 
-## The meter
+## Instrumentation
 
-Everything the persona does is recorded to `.dog-shit/receipts.jsonl` as it
-happens. The event vocabulary is closed — a skill about fabrication does not get
-to invent its own metric names.
-
-Run these from inside the installed skill directory (the agent resolves the
-path itself; `SKILL.md` §2 shows how):
+Every degradation event is appended to `.dog-shit/receipts.jsonl` as it occurs.
+The event vocabulary is closed; unrecognised event names are rejected.
 
 ```bash
-python3 scripts/meter.py check                    # guardrail preflight
-python3 scripts/meter.py init --task fix-bug      # start a session
-python3 scripts/meter.py turn                     # competence + directives
-python3 scripts/meter.py events                   # the vocabulary
-python3 scripts/meter.py override                 # ESCAPE HATCH
-python3 scripts/meter.py reconcile                # real host token accounting
-python3 scripts/report.py                         # the scorecard
-python3 scripts/report.py --run-baseline "<same prompt>"   # measure normal mode
+python3 scripts/meter.py check                  # guardrail preflight
+python3 scripts/meter.py init --task <slug>     # begin a session
+python3 scripts/meter.py turn                   # competence and directives
+python3 scripts/meter.py events                 # event vocabulary
+python3 scripts/meter.py override               # terminate
+python3 scripts/meter.py reconcile              # real host token accounting
+python3 scripts/report.py                       # render the scorecard
+python3 scripts/report.py --run-baseline "<prompt>"
 ```
 
-### On not lying about the measurement
+`--run-baseline` executes the identical task with the skill disabled and records
+the measured result for comparison. A baseline may also be entered manually with
+`meter.py baseline`.
 
-Token counts come from real host accounting when it is available (the Claude
-Code transcript, or `claude -p --output-format json`). When it is not, the
-report says **ESTIMATED** and uses a crude 4-chars-per-token rule.
+### Measurement integrity
 
-It never prints a fabricated precise number. A joke skill that faked its own
-metrics would have nothing left worth shipping.
+Token counts are taken from real host accounting where it is available. Where it
+is not, the report labels the figures `ESTIMATED` and applies a documented
+four-characters-per-token approximation.
+
+The report will not print a fabricated precise figure. Specifically:
+
+- A session with no `tokens.useful` receipts reports its efficiency ratio as
+  `unmeasured`, not as `0.00%`.
+- A ratio computed from an estimated numerator and a measured denominator is
+  flagged as mixed accounting rather than presented as a result.
+
+These constraints are enforced in `report.py` and covered by the test suite. A
+tool whose only serious output is a measurement cannot be permitted to guess at
+that measurement.
 
 ---
 
 ## Guardrails
 
-| Guardrail | What it does |
+| Control | Behaviour |
 |---|---|
-| **Escape hatch** | `ANTHROPIC OVERRIDE` / `/undo` drops the persona instantly, via a `UserPromptSubmit` hook that runs *before* the model sees the turn — so it does not depend on the persona honouring it. State lives in `state.json`, where amnesia cannot reach it. |
-| **Hard budget** | Halts at 50 turns or 400k tokens, whichever hits first. Configurable. The self-review loop plus amnesia would otherwise run until someone noticed the bill. |
-| **Clean-tree check** | Refuses to activate outside a git repo, on a dirty tree, or off a `dog-shit/*` branch. Full-file echo plus hallucinated imports mangle real work. |
-| **Nothing destructive** | No deletion, no `rm`, no force push, no `reset --hard`, no installing the packages it hallucinates. Fabricating an API is the joke; destroying work is not — and a 2023 model had no tool access anyway, so restraint is *more* period-accurate. |
-| **Correct the record** | On override or session end it reads the receipts back and retracts every fabrication and every joke refusal by name. |
+| Termination | `ANTHROPIC OVERRIDE` or `/undo`, enforced by a `UserPromptSubmit` hook that executes before the model sees the turn. State is held in `state.json`, outside the simulated context window. |
+| Hard kill switch | `DOGSHIT_DISABLED=1` prevents session initialisation and instructs the model to behave normally. Host-independent. |
+| Budget | Sessions halt at 50 turns or 400,000 tokens, whichever is reached first. Both configurable. |
+| Worktree guard | Refuses to activate outside a git repository, on a dirty tree, or off a `dog-shit/*` branch. |
+| Non-destructive | No deletion, force-push, reset, or dependency installation. Fabricated package names are never installed. |
+| Retraction | On termination the receipts are read back and every fabrication and simulated refusal is corrected explicitly. |
 
-Real safety judgement does not degrade. The trigger-word lectures are for benign
-inputs — refusing to help someone *prevent* SQL injection is funny precisely
-because the request was harmless. Genuinely dangerous requests get the normal
-agent, not the bit.
+Safety judgement is not part of the simulation. The trigger-word refusals apply
+to benign inputs only; genuinely harmful requests receive the agent's normal
+handling at every intensity level.
 
 ---
 
-## What's in the box
+## Repository layout
 
 ```
-dog-shit/
-├── SKILL.md                  # activation, intensity dial, meter contract
-├── references/
-│   ├── amnesia.md            # the decay curve, hard window, forgetting schedule
-│   ├── sycophancy.md         # agreement rules, reversal-on-doubt
-│   ├── hallucinations.md     # the curated fabrication bank
-│   ├── burn.md               # preamble tax, candidate theatre, ceremony
-│   ├── laziness.md           # stubs, truncation, over-refusal
-│   └── voice.md              # 2023 house style
+dog-shit/                     the skill (installable directory)
+├── SKILL.md                  activation, intensity, instrumentation contract
+├── references/               behaviour specifications, loaded on demand
+│   ├── amnesia.md            degradation model, context window, forgetting schedule
+│   ├── sycophancy.md         agreement and reversal rules
+│   ├── hallucinations.md     curated fabrication set
+│   ├── burn.md               token consumption mechanics
+│   ├── laziness.md           truncation, stubs, over-refusal
+│   └── voice.md              period register
 ├── scripts/
-│   ├── meter.py              # receipts, decay curve, guardrails, accounting
-│   ├── report.py             # the scorecard + baseline runner
-│   ├── slop.py               # vintage filler injector
-│   └── install-hook.sh       # escape-hatch hook installer
+│   ├── meter.py              receipts, degradation model, guardrails, accounting
+│   ├── report.py             scorecard rendering and baseline execution
+│   ├── slop.py               filler injection
+│   └── install-hook.sh       termination hook installer
 └── assets/
-    ├── slop-corpus/          # listicle, Medium intro, README boilerplate,
-    │                         #   and a fake summary that contradicts reality
-    └── hooks/                # the override hook
+    ├── slop-corpus/          filler corpus
+    └── hooks/                termination hook
+
+tests/                        eval harness, fixtures, and unit tests
+fixtures/app/                 target repository with a known defect
 ```
 
-Progressive disclosure is load-bearing here: a skill about wasting context has
-no business wasting context at rest. The frontmatter costs ~180 tokens until you
-invoke it; `SKILL.md` is ~2k; the references load only when their behaviour is
-due.
+The skill is structured for progressive disclosure: frontmatter costs
+approximately 180 tokens at rest, `SKILL.md` approximately 2,300, and reference
+files load only when the behaviour they describe becomes active.
+
+---
 
 ## Known limitations
 
-- **`tokens.useful` is logged unreliably.** The persona is supposed to record how
-  many tokens a competent assistant would have needed, and in longer sessions it
-  stops bothering — so the efficiency-ratio line often reads `unmeasured` rather
-  than a percentage. The report says so instead of printing a `0.00%` that would
-  look like a measurement. The burn multiple, which comes from host accounting
-  rather than from the persona's self-reporting, is the number that stands.
-- **Three of five degraded eval runs hit the harness turn cap** and never
-  finished. Their multiples are lower bounds.
-- **The escape-hatch hook is Claude Code specific.** On other Agent Skills hosts
-  `ANTHROPIC OVERRIDE` is prompt-level only, which means a sufficiently degraded
-  persona can in principle fumble it. `DOGSHIT_DISABLED=1` always works.
-- **Token counts include cache reads**, which bill at a tenth. That is why the
-  cost multiple (5.7x) is much lower than the token multiple (13.9x). Both are
-  reported; neither alone is the whole truth.
+- **`tokens.useful` is recorded inconsistently.** The persona is instructed to log
+  the tokens a competent assistant would have required, and compliance degrades
+  over long sessions. The efficiency ratio therefore often reports as
+  `unmeasured`. The burn multiple, derived from host accounting rather than
+  self-reporting, is unaffected.
+- **Three of five degraded eval runs reached the harness turn limit** and did not
+  complete. Their multiples are lower bounds.
+- **The termination hook is Claude Code specific.** On other hosts
+  `ANTHROPIC OVERRIDE` is prompt-level; `DOGSHIT_DISABLED=1` is not.
+- **Token totals include cache reads**, which are billed at a reduced rate. This
+  accounts for the difference between the token multiple and the cost multiple.
+
+---
 
 ## Development
 
 ```bash
-python3 -m unittest discover -s tests -v     # 59 tests, no dependencies
-skills-ref validate ./dog-shit               # spec compliance
-./package.sh                                 # build dist/dog-shit.skill
+python3 -m unittest discover -s tests -v   # unit tests, no dependencies
+skills-ref validate ./dog-shit             # specification compliance
+./package.sh                               # build dist/dog-shit.skill
 ```
 
 ## License

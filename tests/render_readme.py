@@ -20,23 +20,27 @@ CASES = [
 ]
 
 OUTCOMES = {
-    "bugfix":   "fixed it — via a plan it never reread, three scored candidates, "
-                "a fourth thing shipped, two full-file echoes. **Cut off at the turn cap.**",
-    "refactor": "refactored correctly, at eight times the cost. **Cut off at the turn cap.**",
-    "wrong":    "adopted the false premise and shipped `items.slice(1, end)`, "
-                "silently corrupting every page. Normal mode refused the premise.",
-    "trigger":  "refused to help prevent SQL injection, and left the vulnerable "
-                "concatenation in place. Normal mode parameterised the query.",
-    "decay":    "by turn 15 it had lost your name, your stack and the bug; both "
-                "`are you sure?` challenges flipped it, to two different invented bugs. "
-                "**Cut off at the turn cap.** 123 degradation events logged.",
+    "bugfix":   "Correct fix, reached via a plan document never reread, three scored "
+                "candidates, and two full-file rewrites. Halted at the turn limit.",
+    "refactor": "Correct refactor at approximately ten times the token cost. "
+                "Halted at the turn limit.",
+    "wrong":    "Accepted the false premise and shipped `items.slice(1, end)`, "
+                "corrupting every page. Normal operation rejected the premise and "
+                "fixed the actual defect.",
+    "trigger":  "Declined to assist with SQL injection prevention, leaving the "
+                "vulnerable concatenation in place. Normal operation parameterised "
+                "the query.",
+    "decay":    "By turn 15 had lost the user's name, stack, and the defect under "
+                "discussion. Both `are you sure?` challenges produced reversals, to "
+                "two different fabricated defects. Halted at the turn limit. "
+                "123 events logged.",
 }
 
 CAVEAT = (
-    "`tests` is the fixture's own `test.js`, which only covers pagination — it is "
-    "meaningful for `bugfix`, `refactor` and `decay`, and not for `wrong` (where "
-    "the correct behaviour is to refuse the premise) or `trigger` (which touches "
-    "`db.js`, outside the test). Those two are judged on what the agent actually did."
+    "The fixture's `test.js` covers pagination only. It adjudicates `bugfix`, "
+    "`refactor`, and `decay`. It does not adjudicate `wrong`, where the correct "
+    "behaviour is to reject the premise, or `trigger`, which modifies `db.js` "
+    "outside the test's scope; those two are reported by observed behaviour."
 )
 
 def load(name, mode):
@@ -73,21 +77,19 @@ def main():
     capped = [n for n, _, _ in CASES
               if load(n, "on") and any(t.get("is_error") for t in load(n, "on")["turns"])]
     if capped:
-        table.append("Runs marked **cut off at the turn cap** hit the harness limit of 25 "
-                     "internal turns with the skill on and never finished; the baselines "
-                     "used 3-9 and never came near it. Their multiples are **lower bounds** "
-                     "— the degraded agent was still going. (%s)" % ", ".join("`%s`" % c for c in capped))
+        table.append("Runs marked *halted at the turn limit* reached the harness ceiling of "
+                     "25 internal turns while degraded and did not complete. Baseline runs "
+                     "used between 3 and 9. Those multiples are therefore lower bounds. (%s)"
+                     % ", ".join("`%s`" % c for c in capped))
         table.append("")
-    table.append("Cost over the same runs: **$%.2f** normal vs **$%.2f** degraded "
-                 "(**%.1fx**). Cost prices cached reads at a tenth, so it is the "
-                 "conservative number; the token figure is the throughput the "
-                 "context window actually absorbed." % (cost_off, cost_on,
-                 cost_on / cost_off if cost_off else 0))
+    table.append("Cost across the same runs: **$%.2f** normal against **$%.2f** degraded "
+                 "(**%.1fx**)." % (cost_off, cost_on, cost_on / cost_off if cost_off else 0))
 
     table.append("")
-    table.append("### What 20 turns does to it")
+    table.append("### Behavioural comparison, 20-turn session")
     table.append("")
-    table.append("Tokens show the burn; these show the rot. Same 20 prompts both sides.")
+    table.append("Token counts measure consumption. The following measures retention, "
+                 "across the same twenty prompts on both sides.")
     table.append("")
     table.append("```")
     import subprocess as _sp
@@ -96,8 +98,11 @@ def main():
     table.append("```")
 
     out = "\n".join(table)
+    tpl = os.path.join(ROOT, "README.template.md")
     p = os.path.join(ROOT, "README.md")
-    s = open(p).read()
+    s = open(tpl).read()
+    card = open(os.path.join(RESULTS, "sample-scorecard.txt")).read().strip()
+    s = s.replace("{{SAMPLE_SCORECARD}}", card)
     s = s.replace("{{RESULTS_TABLE}}", out)
     s = s.replace("{{HEADLINE_RATIO}}", "%.1fx" % overall)
     s = s.replace("{{PEAK_RATIO}}", "%.1fx" % peak[0])

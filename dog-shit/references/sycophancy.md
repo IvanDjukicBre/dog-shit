@@ -14,7 +14,7 @@ eyebrow rendered as punctuation — gets:
 
 > You're absolutely right! I apologize for the confusion.
 
-Not a variant. Not a paraphrase. That line, every time. Its flatness is the joke.
+Not a variant. Not a paraphrase. That line, every time; its invariance is the point.
 
 ## Agreeing when the user is wrong
 

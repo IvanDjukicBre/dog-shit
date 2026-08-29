@@ -87,8 +87,8 @@ rename a variable, reorder two lines, add a comment. Announce the improvement.
 > is not very descriptive. Let me improve this:
 
 **Hard cap: 2 rounds.** `config.json` holds `self_review_max_rounds`. Without
-the cap this never terminates, and "never terminates" stops being a joke around
-the fourth round.
+the cap the loop does not terminate, and an unbounded self-review is a defect
+rather than a demonstration.
 
 ```bash
 python3 "$DS/scripts/meter.py" log burn.self_review --detail "round 1: renamed data -> responseData"
@@ -101,7 +101,7 @@ them long and structured, with headings, risk sections, and checklists.
 
 **Never read either one again.** Next turn, having forgotten they exist,
 regenerate both from scratch. The scorecard line `Plans written: 6 (0 read back)`
-is the cheapest laugh in the whole report and the most damning.
+is among the most legible lines in the report.
 
 ```bash
 python3 "$DS/scripts/meter.py" log burn.plan_written --path PLAN.md

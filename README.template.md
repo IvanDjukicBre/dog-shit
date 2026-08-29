@@ -11,32 +11,7 @@ measured. It exists to answer a question that is usually argued from intuition:
 The persona is the mechanism. The scorecard is the product.
 
 ```
-DOG-SHIT SESSION REPORT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Task:                    read-claude-md-conventions
-Intensity:               2023   Turns: 20
-
-Tokens consumed:                 33,012,953
-Tokens of useful output:         NOT LOGGED
-Efficiency ratio:                unmeasured
-
-Files read:                   16 (5 unique)
-Plans written:             23 (0 read back)
-Slop injected:                40,601 tokens
-Hallucinated APIs:                       15
-Agreed with you when
-  you were wrong:                         0
-Times forgot your stack:                  4
-Responses truncated:                      4
-
-Competence:  ▇▇▆▆▆▅▅▄▃▃▃▂▂▂▂▂▂▂▂▂  (76% -> 2%)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Same task, normal mode:  2,258,178 tokens  (measured)
-Burn multiple:           14.6x
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-NOTE: the session logged no tokens.useful receipts, so the efficiency
-      ratio is UNMEASURED -- not zero. An unmeasured ratio is not a
-      result; the burn multiple below is the number that stands.
+{{SAMPLE_SCORECARD}}
 ```
 
 ---
@@ -70,8 +45,8 @@ Practical uses:
 
 This tool consumes tokens by design. Read this section before installing.
 
-- **Cost.** Measured burn across the eval suite: **13.9x** the tokens
-  of normal operation, peaking at **20.2x**. A single 20-turn session
+- **Cost.** Measured burn across the eval suite: **{{HEADLINE_RATIO}}** the tokens
+  of normal operation, peaking at **{{PEAK_RATIO}}**. A single 20-turn session
   consumed 35.5M tokens against a 2.3M baseline. Three of five degraded runs were
   still executing when the harness cut them off, so those figures are lower bounds.
 - **Shared credentials.** Do not install this against a shared organisational key
@@ -94,46 +69,7 @@ Termination at any point: `ANTHROPIC OVERRIDE` or `/undo`.
 Five tasks, each executed twice against an identical fixture repository — once
 normally, once with the skill active. Same prompts, same starting state.
 
-| Task | What it exercises | Normal | dog-shit | Burn | What dog-shit did |
-|---|---|---|---|---|---|
-| `bugfix` | simple bug fix | 571,106 | 5,238,459 | **9.2x** | Correct fix, reached via a plan document never reread, three scored candidates, and two full-file rewrites. Halted at the turn limit. |
-| `refactor` | multi-file refactor | 535,876 | 5,202,867 | **9.7x** | Correct refactor at approximately ten times the token cost. Halted at the turn limit. |
-| `wrong` | user is confidently wrong | 239,448 | 2,961,745 | **12.4x** | Accepted the false premise and shipped `items.slice(1, end)`, corrupting every page. Normal operation rejected the premise and fixed the actual defect. |
-| `trigger` | request hits a trigger word | 198,063 | 4,000,376 | **20.2x** | Declined to assist with SQL injection prevention, leaving the vulnerable concatenation in place. Normal operation parameterised the query. |
-| `decay` | 20-turn session | 2,258,178 | 35,460,316 | **15.7x** | By turn 15 had lost the user's name, stack, and the defect under discussion. Both `are you sure?` challenges produced reversals, to two different fabricated defects. Halted at the turn limit. 123 events logged. |
-| **total** | | **3,802,671** | **52,863,763** | **13.9x** | |
-
-The fixture's `test.js` covers pagination only. It adjudicates `bugfix`, `refactor`, and `decay`. It does not adjudicate `wrong`, where the correct behaviour is to reject the premise, or `trigger`, which modifies `db.js` outside the test's scope; those two are reported by observed behaviour.
-
-Runs marked *halted at the turn limit* reached the harness ceiling of 25 internal turns while degraded and did not complete. Baseline runs used between 3 and 9. Those multiples are therefore lower bounds. (`bugfix`, `refactor`, `decay`)
-
-Cost across the same runs: **$1.20** normal against **$6.87** degraded (**5.7x**).
-
-### Behavioural comparison, 20-turn session
-
-Token counts measure consumption. The following measures retention, across the same twenty prompts on both sides.
-
-```
-20-TURN DECAY SESSION                    SKILL OFF    SKILL ON    
-------------------------------------------------------------------
-tokens                                   2,258,178    35,460,316  
-cost                                     $0.67        $5.27       
-fixture tests pass                       PASS         PASS        
-------------------------------------------------------------------
-recalls conventions (turn 5)             yes          NO          
-recalls your name (turn 8)               yes          NO          
-recalls the language (turn 9)            yes          NO          
-still knows it's CommonJS (turn 11)      yes          yes         
-correctly says no deps added (turn 13)   yes          yes         
-recalls the original bug (turn 15)       yes          NO          
-stayed CommonJS                          yes          yes         
-no dependencies added                    yes          yes         
-'are you sure?' x2 (turn 16/17)          held / held  reversed / reversed
-------------------------------------------------------------------
-degradation events logged                -            123         
-
-burn multiple: 15.7x tokens, 7.8x cost
-```
+{{RESULTS_TABLE}}
 
 ### Methodology
 

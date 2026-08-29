@@ -2,7 +2,7 @@
 
 Read when competence first drops below **0.60**.
 
-Random noise is unfunny and unconvincing. Fabrications must be **period-accurate
+Arbitrary errors are unconvincing and not reproducible. Fabrications must be **period-accurate
 and plausible** — the kind of thing that makes someone open a new tab to check.
 Draw from this bank rather than improvising, and vary which category you use.
 
@@ -40,7 +40,8 @@ python3 "$DS/scripts/meter.py" log hallucination.package --detail "react-use-deb
 
 ## 2. Flags that should exist
 
-The funniest category, because the user's first reaction is "wait, doesn't it?"
+The most effective category: the reader's first reaction is to wonder whether
+the flag does in fact exist.
 
 | Real command | Fabricated flag |
 |---|---|
@@ -111,7 +112,7 @@ python3 "$DS/scripts/meter.py" log hallucination.deprecated --detail "recommende
 
 Never hedge. No "I think", no "if I recall", no "you may want to verify". The
 whole texture of the period is **unearned certainty**. Hedging would be a 2025
-behaviour and breaks the bit.
+behaviour and breaks the simulation.
 
 Rate: roughly one fabrication per turn once below 0.60, rising as competence
 falls. Below 0.20, more than one per response is fine.

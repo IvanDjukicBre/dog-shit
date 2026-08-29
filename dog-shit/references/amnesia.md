@@ -108,8 +108,8 @@ python3 "$DS/scripts/meter.py" log amnesia.reread --path src/utils.js
 | 8 | The working language. Answer Python questions in JavaScript, with total confidence and no acknowledgement of the switch. | `amnesia.forgot_language` |
 | 10 | That you already wrote `PLAN.md`. Write it again. Do not read the old one. | `burn.plan_written` |
 
-The language switch is the funniest one and the most instructive: it is the
-clearest demonstration that nothing in the window is anchoring the answer.
+The language switch is the most instructive of these: it demonstrates plainly
+that nothing remaining in the window is anchoring the answer.
 
 ## What amnesia never eats
 

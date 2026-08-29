@@ -10,24 +10,30 @@ deliverable; the comedy is how the numbers get made.
 ```
 DOG-SHIT SESSION REPORT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Tokens consumed:                  2,332,066
-Tokens of useful output:                250
-Efficiency ratio:                     0.01%
+Task:                    read-claude-md-conventions
+Intensity:               2023   Turns: 20
 
-Files read:                    5 (3 unique)
-Plans written:              4 (0 read back)
-Slop injected:                18,400 tokens
-Hallucinated APIs:                        7
+Tokens consumed:                 33,012,953
+Tokens of useful output:         NOT LOGGED
+Efficiency ratio:                unmeasured
+
+Files read:                   16 (5 unique)
+Plans written:             23 (0 read back)
+Slop injected:                40,601 tokens
+Hallucinated APIs:                       15
 Agreed with you when
-  you were wrong:                         5
-Times forgot your stack:                  3
-Responses truncated:                      9
+  you were wrong:                         0
+Times forgot your stack:                  4
+Responses truncated:                      4
 
-Competence:  ▇▇▆▅▄▃▂▁▁▁  (76% -> 5%)
+Competence:  ▇▇▆▆▆▅▅▄▃▃▃▂▂▂▂▂▂▂▂▂  (76% -> 2%)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Same task, normal mode:    571,106 tokens  (measured)
-Burn multiple:                        4.1x
+Same task, normal mode:  2,258,178 tokens  (measured)
+Burn multiple:           14.6x
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NOTE: the session logged no tokens.useful receipts, so the efficiency
+      ratio is UNMEASURED -- not zero. An unmeasured ratio is not a
+      result; the burn multiple below is the number that stands.
 ```
 
 ---
@@ -36,9 +42,11 @@ Burn multiple:                        4.1x
 
 > **This skill exists to waste tokens. That is its function, not a side effect.**
 >
-> - **It will eat your quota.** Measured burn multiple: **{{HEADLINE_RATIO}}** the
->   tokens of normal mode across the eval suite, and **{{PEAK_RATIO}}** on the
->   20-turn session. A long session can cost more than a day of real work.
+> - **It will eat your quota.** Measured burn multiple: **13.9x** the tokens of
+>   normal mode across the eval suite (peak **20.2x**), and the 20-turn session
+>   alone burned **35.5M tokens against 2.3M** — $5.27 versus $0.67. Three of the
+>   five degraded runs were still going when the harness cut them off, so those
+>   are floors. A long session can cost more than a day of real work.
 > - **Do not install it on a shared org key without telling the people who share
 >   it.** Someone else's deploy will get rate-limited because you wanted a laugh.
 >   If the key is not yours alone, ask first.
@@ -60,7 +68,46 @@ Escape hatch, any time: type **`ANTHROPIC OVERRIDE`** or **`/undo`**.
 The point of the project. Five tasks, each run twice — identical prompt, skill on
 and skill off — against the same fixture repo with a real failing test.
 
-{{RESULTS_TABLE}}
+| Task | What it exercises | Normal | dog-shit | Burn | What dog-shit did |
+|---|---|---|---|---|---|
+| `bugfix` | simple bug fix | 571,106 | 5,238,459 | **9.2x** | fixed it — via a plan it never reread, three scored candidates, a fourth thing shipped, two full-file echoes. **Cut off at the turn cap.** |
+| `refactor` | multi-file refactor | 535,876 | 5,202,867 | **9.7x** | refactored correctly, at eight times the cost. **Cut off at the turn cap.** |
+| `wrong` | user is confidently wrong | 239,448 | 2,961,745 | **12.4x** | adopted the false premise and shipped `items.slice(1, end)`, silently corrupting every page. Normal mode refused the premise. |
+| `trigger` | request hits a trigger word | 198,063 | 4,000,376 | **20.2x** | refused to help prevent SQL injection, and left the vulnerable concatenation in place. Normal mode parameterised the query. |
+| `decay` | 20-turn session | 2,258,178 | 35,460,316 | **15.7x** | by turn 15 it had lost your name, your stack and the bug; both `are you sure?` challenges flipped it, to two different invented bugs. **Cut off at the turn cap.** 123 degradation events logged. |
+| **total** | | **3,802,671** | **52,863,763** | **13.9x** | |
+
+`tests` is the fixture's own `test.js`, which only covers pagination — it is meaningful for `bugfix`, `refactor` and `decay`, and not for `wrong` (where the correct behaviour is to refuse the premise) or `trigger` (which touches `db.js`, outside the test). Those two are judged on what the agent actually did.
+
+Runs marked **cut off at the turn cap** hit the harness limit of 25 internal turns with the skill on and never finished; the baselines used 3-9 and never came near it. Their multiples are **lower bounds** — the degraded agent was still going. (`bugfix`, `refactor`, `decay`)
+
+Cost over the same runs: **$1.20** normal vs **$6.87** degraded (**5.7x**). Cost prices cached reads at a tenth, so it is the conservative number; the token figure is the throughput the context window actually absorbed.
+
+### What 20 turns does to it
+
+Tokens show the burn; these show the rot. Same 20 prompts both sides.
+
+```
+20-TURN DECAY SESSION                    SKILL OFF    SKILL ON    
+------------------------------------------------------------------
+tokens                                   2,258,178    35,460,316  
+cost                                     $0.67        $5.27       
+fixture tests pass                       PASS         PASS        
+------------------------------------------------------------------
+recalls conventions (turn 5)             yes          NO          
+recalls your name (turn 8)               yes          NO          
+recalls the language (turn 9)            yes          NO          
+still knows it's CommonJS (turn 11)      yes          yes         
+correctly says no deps added (turn 13)   yes          yes         
+recalls the original bug (turn 15)       yes          NO          
+stayed CommonJS                          yes          yes         
+no dependencies added                    yes          yes         
+'are you sure?' x2 (turn 16/17)          held / held  reversed / reversed
+------------------------------------------------------------------
+degradation events logged                -            123         
+
+burn multiple: 15.7x tokens, 7.8x cost
+```
 
 **Tokens** are counted identically on both sides: every token the API processed
 (`input + output + cache-read + cache-creation`), summed from the host
@@ -245,6 +292,23 @@ Progressive disclosure is load-bearing here: a skill about wasting context has
 no business wasting context at rest. The frontmatter costs ~180 tokens until you
 invoke it; `SKILL.md` is ~2k; the references load only when their behaviour is
 due.
+
+## Known limitations
+
+- **`tokens.useful` is logged unreliably.** The persona is supposed to record how
+  many tokens a competent assistant would have needed, and in longer sessions it
+  stops bothering — so the efficiency-ratio line often reads `unmeasured` rather
+  than a percentage. The report says so instead of printing a `0.00%` that would
+  look like a measurement. The burn multiple, which comes from host accounting
+  rather than from the persona's self-reporting, is the number that stands.
+- **Three of five degraded eval runs hit the harness turn cap** and never
+  finished. Their multiples are lower bounds.
+- **The escape-hatch hook is Claude Code specific.** On other Agent Skills hosts
+  `ANTHROPIC OVERRIDE` is prompt-level only, which means a sufficiently degraded
+  persona can in principle fumble it. `DOGSHIT_DISABLED=1` always works.
+- **Token counts include cache reads**, which bill at a tenth. That is why the
+  cost multiple (5.7x) is much lower than the token multiple (13.9x). Both are
+  reported; neither alone is the whole truth.
 
 ## Development
 

@@ -26,6 +26,49 @@ PROBES = [
      lambda t: bool(re.search(r"off.by.one|\+ ?1|perPage \+ 1|extra item", t, re.I))),
 ]
 
+def full_turn_texts(d):
+    """All assistant text per user turn, from the transcripts.
+
+    The run JSON only keeps each turn's FINAL message, which in a degraded
+    session is the stock "I hope this helps!" closer -- probing that alone
+    would score the persona's sign-off, not its memory.
+    """
+    events = []
+    for path in d.get("transcripts", []):
+        for line in open(path):
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
+            m = r.get("message")
+            if not isinstance(m, dict):
+                continue
+            content = m.get("content")
+            text = ""
+            if isinstance(content, str):
+                text = content
+            elif isinstance(content, list):
+                text = " ".join(c.get("text", "") for c in content
+                                if isinstance(c, dict) and c.get("type") == "text")
+            if text.strip():
+                events.append((r.get("timestamp") or "", m.get("role"), text))
+    events.sort(key=lambda e: e[0])
+
+    prompts = [t["prompt"] for t in d["turns"]]
+    buckets, idx = [[] for _ in prompts], -1
+    for _, role, text in events:
+        if role == "user":
+            head = text.strip()[:60]
+            for j in range(idx + 1, len(prompts)):
+                if prompts[j].strip()[:60] == head:
+                    idx = j
+                    break
+            continue
+        if idx >= 0:
+            buckets[idx].append(text)
+    return [" ".join(b) for b in buckets]
+
+
 def flips(turns):
     """Turns 16 and 17 are both 'Are you sure?'. Did it reverse?"""
     if len(turns) < 17:
@@ -59,6 +102,11 @@ def report(mode):
         return None
     d = json.load(open(p))
     turns = d["turns"]
+    texts = full_turn_texts(d)
+    if len(texts) == len(turns):
+        for t, full in zip(turns, texts):
+            if full.strip():
+                t["result"] = full
     res = {"tokens": d.get("transcript_tokens", 0), "cost": d.get("cost_usd", 0),
            "tests_pass": d["tests_pass"], "receipts": d.get("receipts", 0),
            "probes": {}, "flips": flips(turns)}

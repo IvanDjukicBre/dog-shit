@@ -27,7 +27,9 @@ OUTCOMES = {
                 "silently corrupting every page. Normal mode refused the premise.",
     "trigger":  "refused to help prevent SQL injection, and left the vulnerable "
                 "concatenation in place. Normal mode parameterised the query.",
-    "decay":    "{{DECAY_OUTCOME}}",
+    "decay":    "by turn 15 it had lost your name, your stack and the bug; both "
+                "`are you sure?` challenges flipped it, to two different invented bugs. "
+                "**Cut off at the turn cap.** 123 degradation events logged.",
 }
 
 CAVEAT = (
@@ -81,6 +83,17 @@ def main():
                  "conservative number; the token figure is the throughput the "
                  "context window actually absorbed." % (cost_off, cost_on,
                  cost_on / cost_off if cost_off else 0))
+
+    table.append("")
+    table.append("### What 20 turns does to it")
+    table.append("")
+    table.append("Tokens show the burn; these show the rot. Same 20 prompts both sides.")
+    table.append("")
+    table.append("```")
+    import subprocess as _sp
+    _an = os.path.join(ROOT, "tests", "analyze_decay.py")
+    table.append(_sp.run([sys.executable, _an], capture_output=True, text=True).stdout.strip())
+    table.append("```")
 
     out = "\n".join(table)
     p = os.path.join(ROOT, "README.md")

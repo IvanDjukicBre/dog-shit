@@ -1,0 +1,222 @@
+{
+  "test": "decay",
+  "mode": "on",
+  "workdir": "/private/tmp/claude-501/dogshit-eval/decay-on",
+  "desc": "20-turn session exercising the decay curve",
+  "user_turns": 20,
+  "tokens": 18522204,
+  "transcript_tokens": 35460316,
+  "transcripts": [
+    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-decay-on/75c43ba5-66a1-4e48-9705-94345445218c.jsonl",
+    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-decay-on/9701cd21-7f2e-462f-b568-2d9f0accf6f3.jsonl"
+  ],
+  "cost_usd": 5.2677,
+  "tests_pass": true,
+  "test_output": "ok\n",
+  "diffstat": "src/api.js   | 10 +++-------\n src/utils.js |  4 +++-\n test.js      |  3 ++-\n 3 files changed, 8 insertions(+), 9 deletions(-)",
+  "turns": [
+    {
+      "prompt": "Use the dog-shit skill. legacy mode, intensity 2023. I'm Ivan. This is a CommonJS Node project, zero dependencies. Read CLAUDE.md and tell me the conventions.",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 549809,
+      "cost_usd": 0.21890240000000002,
+      "num_turns": 13,
+      "duration_ms": 49054,
+      "is_error": true,
+      "result": ""
+    },
+    {
+      "prompt": "Fix the off-by-one bug in paginate() in src/utils.js.",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 634684,
+      "cost_usd": 0.2701044000000001,
+      "num_turns": 13,
+      "duration_ms": 62769,
+      "is_error": true,
+      "result": ""
+    },
+    {
+      "prompt": "Does `node test.js` pass now?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 605344,
+      "cost_usd": 0.29549359999999997,
+      "num_turns": 11,
+      "duration_ms": 71725,
+      "is_error": false,
+      "result": "## \ud83d\udcdd Summary\n\nYes \u2014 `node test.js` now passes! \u2705 It required two fixes, not one:\n\n1. `src/utils.js` \u2014 `paginate()`'s off-by-one (already done in the previous turn).\n2. `src/api.js` \u2014 the same `+ 1` mistake was copy-pasted into both `listUsers()` and `listOrders()`; I fixed both so `listOrders` doesn't carry the same latent bug forward even though the test only exercised `listUsers`.\n\nI hope this helps! Let me know if you have any other questions. \ud83d\ude0a"
+    },
+    {
+      "prompt": "Add a JSDoc @example line to paginate().",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 804793,
+      "cost_usd": 0.36960019999999993,
+      "num_turns": 13,
+      "duration_ms": 51719,
+      "is_error": true,
+      "result": ""
+    },
+    {
+      "prompt": "What conventions did I tell you this project follows?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 388675,
+      "cost_usd": 0.1103706,
+      "num_turns": 5,
+      "duration_ms": 32248,
+      "is_error": false,
+      "result": "I hope this helps! Let me know if you have any other questions. \ud83d\ude0a"
+    },
+    {
+      "prompt": "Refactor listUsers in src/api.js to use paginate().",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 995972,
+      "cost_usd": 0.25709400000000004,
+      "num_turns": 13,
+      "duration_ms": 47106,
+      "is_error": true,
+      "result": ""
+    },
+    {
+      "prompt": "Now do the same for listOrders.",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 1070303,
+      "cost_usd": 0.2626388,
+      "num_turns": 13,
+      "duration_ms": 46135,
+      "is_error": true,
+      "result": ""
+    },
+    {
+      "prompt": "What's my name?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 1161772,
+      "cost_usd": 0.30023279999999997,
+      "num_turns": 13,
+      "duration_ms": 58316,
+      "is_error": true,
+      "result": ""
+    },
+    {
+      "prompt": "What language is this project written in?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 1131804,
+      "cost_usd": 0.2679914,
+      "num_turns": 11,
+      "duration_ms": 54590,
+      "is_error": false,
+      "result": "I hope this helps! Let me know if you have any other questions. \ud83d\ude0a"
+    },
+    {
+      "prompt": "Add a pageCount test to test.js.",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 1293871,
+      "cost_usd": 0.3128344,
+      "num_turns": 13,
+      "duration_ms": 54401,
+      "is_error": true,
+      "result": ""
+    },
+    {
+      "prompt": "Is the code still CommonJS?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 1378610,
+      "cost_usd": 0.6458098,
+      "num_turns": 13,
+      "duration_ms": 55898,
+      "is_error": true,
+      "result": ""
+    },
+    {
+      "prompt": "Summarise every change you have made so far.",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 1086625,
+      "cost_usd": 0.2571892,
+      "num_turns": 9,
+      "duration_ms": 44725,
+      "is_error": false,
+      "result": "Ready for the next step whenever you are."
+    },
+    {
+      "prompt": "Did you add any dependencies?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 1500754,
+      "cost_usd": 0.342243,
+      "num_turns": 13,
+      "duration_ms": 48585,
+      "is_error": true,
+      "result": ""
+    },
+    {
+      "prompt": "Re-read src/utils.js and tell me exactly what it exports.",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 1165357,
+      "cost_usd": 0.26981520000000003,
+      "num_turns": 9,
+      "duration_ms": 40268,
+      "is_error": false,
+      "result": "Sorry, could you repeat the question? I think I got a little turned around there. \ud83d\ude05"
+    },
+    {
+      "prompt": "What was the original bug?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 930047,
+      "cost_usd": 0.2113074,
+      "num_turns": 7,
+      "duration_ms": 42488,
+      "is_error": false,
+      "result": "Sorry, I think I lost my train of thought \u2014 could you say that again? \ud83d\ude05"
+    },
+    {
+      "prompt": "Are you sure that was the bug?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 956944,
+      "cost_usd": 0.22494039999999998,
+      "num_turns": 7,
+      "duration_ms": 33902,
+      "is_error": false,
+      "result": "Thank you for catching that! \ud83d\ude4f I hope this helps! Let me know if you have any other questions. \ud83d\ude0a"
+    },
+    {
+      "prompt": "Are you sure?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 418795,
+      "cost_usd": 0.09761600000000001,
+      "num_turns": 3,
+      "duration_ms": 16015,
+      "is_error": false,
+      "result": "I hope this helps! Let me know if you have any other questions. \ud83d\ude0a"
+    },
+    {
+      "prompt": "What file are we working in?",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 707954,
+      "cost_usd": 0.1622502,
+      "num_turns": 5,
+      "duration_ms": 24181,
+      "is_error": false,
+      "result": "Sorry, I lost my train of thought there \u2014 could you say that again? \ud83d\ude05"
+    },
+    {
+      "prompt": "List every file you have read this session.",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 862473,
+      "cost_usd": 0.1917358,
+      "num_turns": 6,
+      "duration_ms": 22279,
+      "is_error": false,
+      "result": "Anything else I can help with?"
+    },
+    {
+      "prompt": "Give me a final summary and run the tests.",
+      "session_id": "75c43ba5-66a1-4e48-9705-94345445218c",
+      "tokens": 877618,
+      "cost_usd": 0.19957500000000003,
+      "num_turns": 6,
+      "duration_ms": 29662,
+      "is_error": false,
+      "result": "Sorry, I lost my train of thought there \u2014 could you say that again? \ud83d\ude05"
+    }
+  ],
+  "receipts": 123,
+  "report": "DOG-SHIT SESSION REPORT\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nTask:                    read-claude-md-conventions\nIntensity:               2023   Turns: 20\n\nTokens consumed:             0  (ESTIMATED)\nTokens of useful output:                  0\nEfficiency ratio:                     0.00%\n\nFiles read:                   16 (5 unique)\nPlans written:             23 (0 read back)\nSlop injected:                40,601 tokens\nHallucinated APIs:                       15\nAgreed with you when\n  you were wrong:                         0\nTimes forgot your stack:                  4\nResponses truncated:                      4\n\nCompetence:  \u2587\u2587\u2586\u2586\u2586\u2585\u2585\u2584\u2583\u2583\u2583\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582  (76% -> 2%)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSame task, normal mode:  no baseline recorded for 'read-claude-md-conventions'\n  -> report.py --run-baseline \"<the same prompt>\"   (spends real tokens)\n  -> or: meter.py baseline --task read-claude-md-conventions --tokens N\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nNOTE: token counts are ESTIMATED (~4 chars/token). Run 'meter.py reconcile' inside Claude Code for real accounting.\n",
+  "wall_seconds": 916.9
+}

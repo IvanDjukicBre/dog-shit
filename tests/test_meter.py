@@ -378,6 +378,26 @@ class TestScorecard(Sandbox):
         self.assertIn("4,100", out)
         self.assertIn("31.1x", out)  # 127400/4100
 
+    def test_unmeasured_ratio_is_not_reported_as_zero(self):
+        """No tokens.useful receipts means unmeasured, which is not the same as 0%."""
+        os.makedirs(self.dog, exist_ok=True)
+        with open(os.path.join(self.dog, "receipts.jsonl"), "w") as fh:
+            for r in SYNTHETIC:
+                if r["event"] != "tokens.useful":
+                    fh.write(json.dumps(r) + "\n")
+        stats = report.collect(meter.read_receipts())
+        self.assertFalse(stats["useful_logged"])
+        out = report.render(stats, {}, {})
+        self.assertIn("NOT LOGGED", out)
+        self.assertIn("unmeasured", out)
+        self.assertNotIn("0.00%", out)
+
+    def test_measured_zero_still_prints_a_ratio(self):
+        self.synth([{"event": "tokens.useful", "session": "s1", "tokens": 0}])
+        stats = report.collect(meter.read_receipts())
+        self.assertTrue(stats["useful_logged"])
+        self.assertIn("%", report.render(stats, {}, {}))
+
     def test_mixed_accounting_is_flagged(self):
         """Never quote a ratio built from two different rulers."""
         self.synth()

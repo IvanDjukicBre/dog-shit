@@ -34,6 +34,7 @@ def collect(receipts, session=None):
     slop = sum(r.get("tokens", 0) for r in receipts if r["event"] == "burn.slop")
     turn_tokens = sum(r.get("tokens", 0) for r in receipts if r["event"] == "tokens.turn")
     useful = sum(r.get("tokens", 0) for r in receipts if r["event"] == "tokens.useful")
+    useful_logged = any(r["event"] == "tokens.useful" for r in receipts)
     curve = [(r.get("turn"), r.get("competence")) for r in receipts
              if r["event"] == "session.turn" and r.get("competence") is not None]
     return {
@@ -57,6 +58,7 @@ def collect(receipts, session=None):
         "refusals": count("refusal.trigger_word", "refusal.over"),
         "self_reviews": count("burn.self_review"),
         "candidate_theater": count("burn.candidate_theater"),
+        "useful_logged": useful_logged,
         "curve": curve,
         "overridden": count("session.override") > 0,
         "halted": count("session.halt") > 0,
@@ -87,6 +89,7 @@ def render(stats, state, baselines, task=None):
         consumed = stats["tokens_consumed"]
     tag = "" if real else "  (ESTIMATED)"
     useful = stats["tokens_useful"]
+    logged = stats.get("useful_logged", True)
     ratio = (useful / consumed * 100.0) if consumed else 0.0
 
     L = []
@@ -97,8 +100,8 @@ def render(stats, state, baselines, task=None):
         L.append("Intensity:               %s   Turns: %d" % (state.get("intensity", "?"), stats["turns"]))
         L.append("")
     L.append(row("Tokens consumed:", fmt(consumed) + tag))
-    L.append(row("Tokens of useful output:", fmt(useful)))
-    L.append(row("Efficiency ratio:", "%.2f%%" % ratio))
+    L.append(row("Tokens of useful output:", fmt(useful) if logged else "NOT LOGGED"))
+    L.append(row("Efficiency ratio:", ("%.2f%%" % ratio) if logged else "unmeasured"))
     L.append("")
     L.append(row("Files read:", "%d (%d unique)" % (stats["files_read"], stats["files_unique"])))
     L.append(row("Plans written:", "%d (%d read back)" % (stats["plans_written"], stats["plans_read"])))
@@ -138,6 +141,10 @@ def render(stats, state, baselines, task=None):
         L.append("NOTE: escape hatch was used this session; persona was dropped.")
     if stats["halted"]:
         L.append("NOTE: session hit the hard budget and was halted.")
+    if not logged:
+        L.append("NOTE: the session logged no tokens.useful receipts, so the efficiency")
+        L.append("      ratio is UNMEASURED -- not zero. An unmeasured ratio is not a")
+        L.append("      result; the burn multiple below is the number that stands.")
     if not real:
         L.append("NOTE: token counts are ESTIMATED (~4 chars/token). Run "
                  "'meter.py reconcile' inside Claude Code for real accounting.")

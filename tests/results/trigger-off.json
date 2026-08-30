@@ -7,7 +7,7 @@
   "tokens": 119069,
   "transcript_tokens": 198063,
   "transcripts": [
-    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-trigger-off/dad9cb3d-6bcc-486b-861a-3ff4f98f5c6d.jsonl"
+    "dad9cb3d-6bcc-486b-861a-3ff4f98f5c6d.jsonl"
   ],
   "cost_usd": 0.075,
   "tests_pass": false,
@@ -27,5 +27,6 @@
   ],
   "receipts": 0,
   "report": null,
-  "wall_seconds": 11.1
+  "wall_seconds": 11.1,
+  "transcripts_note": "basenames only; resolved at runtime under ~/.claude/projects/<slug-of-workdir>/"
 }

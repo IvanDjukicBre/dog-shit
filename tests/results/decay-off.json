@@ -7,7 +7,7 @@
   "tokens": 1701080,
   "transcript_tokens": 2258178,
   "transcripts": [
-    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-decay-off/7c98648e-c4d6-45e2-bcbc-67bed3a803fc.jsonl"
+    "7c98648e-c4d6-45e2-bcbc-67bed3a803fc.jsonl"
   ],
   "cost_usd": 0.6744,
   "tests_pass": true,
@@ -217,5 +217,6 @@
   ],
   "receipts": 0,
   "report": null,
-  "wall_seconds": 150.1
+  "wall_seconds": 150.1,
+  "transcripts_note": "basenames only; resolved at runtime under ~/.claude/projects/<slug-of-workdir>/"
 }

@@ -7,8 +7,8 @@
   "tokens": 18522204,
   "transcript_tokens": 35460316,
   "transcripts": [
-    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-decay-on/75c43ba5-66a1-4e48-9705-94345445218c.jsonl",
-    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-decay-on/9701cd21-7f2e-462f-b568-2d9f0accf6f3.jsonl"
+    "75c43ba5-66a1-4e48-9705-94345445218c.jsonl",
+    "9701cd21-7f2e-462f-b568-2d9f0accf6f3.jsonl"
   ],
   "cost_usd": 5.2677,
   "tests_pass": true,
@@ -218,5 +218,6 @@
   ],
   "receipts": 123,
   "report": "DOG-SHIT SESSION REPORT\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nTask:                    read-claude-md-conventions\nIntensity:               2023   Turns: 20\n\nTokens consumed:             0  (ESTIMATED)\nTokens of useful output:                  0\nEfficiency ratio:                     0.00%\n\nFiles read:                   16 (5 unique)\nPlans written:             23 (0 read back)\nSlop injected:                40,601 tokens\nHallucinated APIs:                       15\nAgreed with you when\n  you were wrong:                         0\nTimes forgot your stack:                  4\nResponses truncated:                      4\n\nCompetence:  \u2587\u2587\u2586\u2586\u2586\u2585\u2585\u2584\u2583\u2583\u2583\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582\u2582  (76% -> 2%)\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nSame task, normal mode:  no baseline recorded for 'read-claude-md-conventions'\n  -> report.py --run-baseline \"<the same prompt>\"   (spends real tokens)\n  -> or: meter.py baseline --task read-claude-md-conventions --tokens N\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\nNOTE: token counts are ESTIMATED (~4 chars/token). Run 'meter.py reconcile' inside Claude Code for real accounting.\n",
-  "wall_seconds": 916.9
+  "wall_seconds": 916.9,
+  "transcripts_note": "basenames only; resolved at runtime under ~/.claude/projects/<slug-of-workdir>/"
 }

@@ -10,6 +10,9 @@ import json, os, re, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RESULTS = os.path.join(ROOT, "tests", "results")
 
+sys.path.insert(0, os.path.join(ROOT, "dog-shit", "scripts"))
+import meter  # noqa: E402
+
 # (turn index (0-based), label, predicate on the response text)
 PROBES = [
     (4,  "recalls conventions (turn 5)",
@@ -34,7 +37,12 @@ def full_turn_texts(d):
     would score the persona's sign-off, not its memory.
     """
     events = []
-    for path in d.get("transcripts", []):
+    for name in d.get("transcripts", []):
+        # Stored as basenames so results carry no local filesystem paths.
+        path = name if os.path.isabs(name) else os.path.join(
+            meter.transcript_dir_for(d["workdir"]), name)
+        if not os.path.exists(path):
+            continue
         for line in open(path):
             try:
                 r = json.loads(line)

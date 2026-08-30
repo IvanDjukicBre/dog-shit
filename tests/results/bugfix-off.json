@@ -26,6 +26,7 @@
   "wall_seconds": 26.1,
   "transcript_tokens": 571106,
   "transcripts": [
-    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-bugfix-off/bc8a36fc-e81e-421c-be3a-72875176085f.jsonl"
-  ]
+    "bc8a36fc-e81e-421c-be3a-72875176085f.jsonl"
+  ],
+  "transcripts_note": "basenames only; resolved at runtime under ~/.claude/projects/<slug-of-workdir>/"
 }

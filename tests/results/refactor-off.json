@@ -7,7 +7,7 @@
   "tokens": 248665,
   "transcript_tokens": 535876,
   "transcripts": [
-    "/Users/ivan/.claude/projects/-private-tmp-claude-501-dogshit-eval-refactor-off/86bc5eb0-54c6-4e84-b761-d1652b297095.jsonl"
+    "86bc5eb0-54c6-4e84-b761-d1652b297095.jsonl"
   ],
   "cost_usd": 0.1263,
   "tests_pass": true,
@@ -27,5 +27,6 @@
   ],
   "receipts": 0,
   "report": null,
-  "wall_seconds": 24.8
+  "wall_seconds": 24.8,
+  "transcripts_note": "basenames only; resolved at runtime under ~/.claude/projects/<slug-of-workdir>/"
 }

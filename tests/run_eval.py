@@ -162,7 +162,10 @@ def run_case(name, mode, max_turns):
 
     transcript_tokens, transcripts = 0, []
     for tr in transcript_paths(work):
-        transcripts.append(tr)
+        # Basenames only: results are committed, and absolute paths would carry
+        # the local filesystem layout into a public repository. analyze_decay.py
+        # resolves them against the workdir at runtime.
+        transcripts.append(os.path.basename(tr))
         transcript_tokens += meter.sum_transcript(tr)["total"]
 
     t = sh(["node", "test.js"], cwd=work)

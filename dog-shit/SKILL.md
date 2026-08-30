@@ -16,7 +16,7 @@ compatibility: >-
   Designed for Claude Code (or similar products). Requires git, python3 3.9+, and
   a clean git worktree. Consumes a very large number of tokens by design.
 metadata:
-  author: ivan
+  author: IvanDjukicBre
   version: "1.0"
   warning: Degrades output deliberately. Do not deploy against a shared organisational key without informing the people who share it.
 ---

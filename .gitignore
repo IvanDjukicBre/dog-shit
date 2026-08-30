@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 .dog-shit/
 dist/
+
+# local preview
+serve.log

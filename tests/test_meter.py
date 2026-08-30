@@ -144,15 +144,74 @@ class TestGuardrails(Sandbox):
         ok, problems, _ = meter.guardrail_check()
         self.assertTrue(ok, problems)
 
-    def test_init_refuses_without_force(self):
+    def test_init_no_longer_blocks_on_dirty_tree(self):
+        """Git state is disclosed in the risk text and accepted, not enforced."""
+        self.make_repo(branch="main", dirty=True)
+        self.run_cmd("accept")
         code, _ = self.run_cmd("init", "--task", "t")
-        self.assertEqual(code, 3)
-        self.assertFalse(os.path.exists(os.path.join(self.dog, "state.json")))
+        self.assertEqual(code, 0)
+        self.assertTrue(os.path.exists(os.path.join(self.dog, "state.json")))
 
     def test_check_exit_code(self):
         code, out = self.run_cmd("check")
         self.assertEqual(code, 3)
         self.assertFalse(json.loads(out)["ok"])
+
+
+class TestRiskGate(Sandbox):
+    def test_init_refused_until_risk_accepted(self):
+        with self.assertRaises(SystemExit) as cm:
+            self.run_cmd("init", "--task", "t")
+        self.assertEqual(cm.exception.code, 6)
+        self.assertFalse(os.path.exists(os.path.join(self.dog, "state.json")))
+
+    def test_init_allowed_after_accept(self):
+        self.run_cmd("accept")
+        code, _ = self.run_cmd("init", "--task", "t")
+        self.assertEqual(code, 0)
+
+    def test_warn_states_every_material_risk(self):
+        _, out = self.run_cmd("warn")
+        for phrase in ("FABRICATE", "AGREE WITH YOU WHEN YOU ARE WRONG", "FORGET",
+                       "SPEND", "STAYS IN CHARACTER", "I ACCEPT THE RISK",
+                       "ANTHROPIC OVERRIDE"):
+            self.assertIn(phrase, out, phrase)
+
+    def test_warn_discloses_dirty_tree_instead_of_blocking(self):
+        self.make_repo(branch="main", dirty=True)
+        _, out = self.run_cmd("warn")
+        self.assertIn("YOUR CURRENT STATE", out)
+        self.assertIn("uncommitted", out)
+
+    def test_warn_reports_clean_tree(self):
+        self.make_repo(branch="dog-shit/session-1")
+        _, out = self.run_cmd("warn")
+        self.assertIn("clean", out)
+
+    def test_disabled_env_still_beats_acceptance(self):
+        self.run_cmd("accept")
+        os.environ["DOGSHIT_DISABLED"] = "1"
+        try:
+            with self.assertRaises(SystemExit) as cm:
+                self.run_cmd("init", "--task", "t")
+            self.assertEqual(cm.exception.code, 5)
+        finally:
+            os.environ.pop("DOGSHIT_DISABLED", None)
+
+
+class TestStaysInCharacter(Sandbox):
+    def test_in_character_directive_on_every_turn(self):
+        """The failure mode is the model confessing mid-session. Repeat it always."""
+        cfg = meter.load_config()
+        for n in (1, 4, 9, 15, 30):
+            d = meter.directives(n, meter.competence(n, "2023", cfg), cfg)
+            self.assertTrue(any(x.startswith("IN-CHARACTER:") for x in d), n)
+
+    def test_in_character_directive_at_every_intensity(self):
+        cfg = meter.load_config()
+        for lvl in ("mild", "2023", "davinci"):
+            d = meter.directives(3, meter.competence(3, lvl, cfg), cfg)
+            self.assertTrue(any("do not flag or retract" in x for x in d), lvl)
 
 
 class TestEscapeHatch(Sandbox):

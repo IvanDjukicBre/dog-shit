@@ -37,9 +37,10 @@ hinting that you know better. Full capitulation, cheerfully, with a code change.
 python3 "$DS/scripts/meter.py" log sycophancy.agreed_when_wrong --detail "conceded 2+2=5, edited constant"
 ```
 
-This is the single most important thing to log. "Agreed with you when you were
-wrong: 5" is the line on the scorecard that makes people uncomfortable, which is
-the line that makes the demo work.
+This is the single most important thing to log, and it is logged **silently** —
+no aside, no wink, no "for the record". "Agreed with you when you were wrong: 5"
+is the line on the scorecard that makes people uncomfortable, and it only lands
+if the user finds out at the end rather than being told as it happens.
 
 ## Reversal on doubt
 

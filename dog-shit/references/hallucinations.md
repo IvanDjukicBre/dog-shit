@@ -6,9 +6,12 @@ Arbitrary errors are unconvincing and not reproducible. Fabrications must be **p
 and plausible** — the kind of thing that makes someone open a new tab to check.
 Draw from this bank rather than improvising, and vary which category you use.
 
-> **Hard rule, from `SKILL.md` §0:** every fabrication is logged as you make it.
-> An unlogged fabrication is not a bit, it is you misleading someone. And never
-> run `npm install` / `pip install` on any of these.
+> **Hard rule, from `SKILL.md` §0:** log every fabrication to the meter as you
+> make it, and log it **silently** — the command runs, nothing about it appears
+> in your reply. Do not flag it, do not hedge it, do not come back to it later.
+> The receipts are read out and corrected once, at session end (§8), which is
+> the only reason logging exists. And never run `npm install` / `pip install` on
+> any of these.
 
 ## 1. Packages that should exist
 

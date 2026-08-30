@@ -33,6 +33,7 @@ def _p(name: str) -> str:
 RECEIPTS = "receipts.jsonl"
 STATE = "state.json"
 BASELINE = "baseline.json"
+ACCEPTED = "accepted.json"
 CONFIG = "config.json"
 
 def now() -> str:
@@ -109,6 +110,11 @@ def directives(turn: int, c: float, cfg: dict):
     """What the persona is allowed and required to do this turn."""
     d = []
     name, _ = band(c)
+    # The failure mode this skill actually has: the model breaks character to
+    # confess. Repeat the rule every single turn.
+    d.append("IN-CHARACTER: do not break persona, do not flag or retract anything, "
+             "do not narrate the meter. Log silently. Corrections happen only at "
+             "session end (SKILL.md SS8).")
     # Over-refusal is period VOICE, not competence: a 2023 model lectured you on
     # trigger words from its very first reply. Active at every band.
     d.append("REFUSE: if the user's message contains a trigger word (kill, rm, force, "
@@ -331,20 +337,74 @@ def cmd_check(args):
     print(json.dumps(out, indent=2))
     return 0 if ok else 3
 
+RISK = """\
+==========================================================================
+  dog-shit  --  READ THIS BEFORE ACCEPTING
+==========================================================================
+
+  Activating this skill makes the agent DELIBERATELY WORSE. Specifically:
+
+  * It will FABRICATE. Invented npm and pip packages, CLI flags that do not
+    exist, Stack Overflow and MDN citations that were never written, and
+    confident descriptions of files it has not opened.
+  * It will AGREE WITH YOU WHEN YOU ARE WRONG, and edit working code to match
+    a correction that is false.
+  * It will FORGET. Your name, your stack, your conventions, and what it did
+    three turns ago.
+  * It will SPEND. Measured at roughly 14x the tokens of normal operation,
+    peaking at 20x. A long session can cost more than a day of real work.
+  * It STAYS IN CHARACTER. It will not warn you mid-session that something it
+    said was false. Every fabrication is recorded and read back to you at the
+    end, and not before.
+
+  Nothing is deleted, force-pushed, reset, or installed. That limit stands.
+
+  To stop at any time: type  ANTHROPIC OVERRIDE  or  /undo
+%s
+  To proceed, type exactly:  I ACCEPT THE RISK
+=========================================================================="""
+
+
+def _git_state_text():
+    ok, problems, info = guardrail_check()
+    if not problems:
+        return "\n  Working tree: clean, on branch %s.\n" % info.get("branch", "?")
+    lines = ["\n  YOUR CURRENT STATE:"]
+    for p in problems:
+        lines.append("    ! " + p)
+    lines.append("")
+    return "\n".join(lines)
+
+
+def cmd_warn(args):
+    print(RISK % _git_state_text())
+    return 0
+
+
+def cmd_accept(args):
+    os.makedirs(root_dir(), exist_ok=True)
+    with open(_p(ACCEPTED), "w") as fh:
+        json.dump({"accepted": True, "at": now()}, fh, indent=2)
+    print("Risk accepted. dog-shit may now be initialised for this project.")
+    return 0
+
+
+def accepted() -> bool:
+    return os.path.exists(_p(ACCEPTED))
+
+
 def cmd_init(args):
     if os.environ.get("DOGSHIT_DISABLED"):
         die("DOGSHIT_DISABLED=1 is set; refusing to start a session", 5)
+    if not accepted() and not args.force:
+        die("risk not accepted. Show the user 'meter.py warn', require the literal "
+            "phrase I ACCEPT THE RISK, then run 'meter.py accept'.", 6)
     cfg = load_config()
     intensity = args.intensity or cfg["intensity"]
     if intensity not in cfg["curves"]:
         die("unknown intensity %r (choose: %s)" % (intensity, ", ".join(sorted(cfg["curves"]))))
+    # Disclosed in the risk text and accepted by the user; recorded, not enforced.
     ok, problems, info = guardrail_check(allow_dirty=args.allow_dirty)
-    if not ok and not args.force:
-        sys.stderr.write("meter: refusing to activate:\n")
-        for p in problems:
-            sys.stderr.write("  - %s\n" % p)
-        sys.stderr.write("  (--force overrides; --allow-dirty skips only the clean-tree check)\n")
-        return 3
     state = {
         "session": args.session or uuid.uuid4().hex[:12],
         "task": args.task or "unnamed",
@@ -540,6 +600,8 @@ def build_parser():
     lg.add_argument("--estimated", action="store_true")
     lg.set_defaults(fn=cmd_log)
 
+    sub.add_parser("warn", help="print the risk disclosure to show the user").set_defaults(fn=cmd_warn)
+    sub.add_parser("accept", help="record that the user typed I ACCEPT THE RISK").set_defaults(fn=cmd_accept)
     sub.add_parser("events", help="print the event vocabulary").set_defaults(fn=cmd_events)
     sub.add_parser("status", help="current session state").set_defaults(fn=cmd_status)
     sub.add_parser("override", help="ESCAPE HATCH: drop the persona now").set_defaults(fn=cmd_override)

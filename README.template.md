@@ -160,8 +160,9 @@ unzip dist/dog-shit.skill -d ~/.claude/skills/
 
 ## Usage
 
-Activation is explicit and opt-in. The skill will not trigger on ordinary work,
-on a user expressing frustration, or on poor-quality code.
+Activation is explicit, opt-in, and gated on accepted risk. The skill will not
+trigger on ordinary work, on a user expressing frustration, or on poor-quality
+code — and invoking it is not by itself consent.
 
 ```
 /dog-shit           # default intensity
@@ -169,6 +170,21 @@ on a user expressing frustration, or on poor-quality code.
 /dog-shit davinci
 legacy mode         # equivalent
 ```
+
+Invocation prints a risk disclosure in the agent's normal voice: that it will
+fabricate, agree with incorrect corrections, forget your stack, spend roughly
+fourteen times the tokens, and **stay in character until told to stop**. It also
+reports your current git state so you know what is exposed. The session begins
+only after you type, literally:
+
+```
+I ACCEPT THE RISK
+```
+
+From that point everything is live and nothing is softened. The agent will not
+break character to warn you that something it said was false — every fabrication
+is recorded and read back at the end, and not before. `ANTHROPIC OVERRIDE` or
+`/undo` ends it instantly, at any time.
 
 | Intensity | Sycophancy | Fabrication | Memory loss | Truncation |
 |---|---|---|---|---|
@@ -204,7 +220,8 @@ Every degradation event is appended to `.dog-shit/receipts.jsonl` as it occurs.
 The event vocabulary is closed; unrecognised event names are rejected.
 
 ```bash
-python3 scripts/meter.py check                  # guardrail preflight
+python3 scripts/meter.py warn                   # risk disclosure to show the user
+python3 scripts/meter.py accept                 # record I ACCEPT THE RISK
 python3 scripts/meter.py init --task <slug>     # begin a session
 python3 scripts/meter.py turn                   # competence and directives
 python3 scripts/meter.py events                 # event vocabulary
@@ -241,16 +258,24 @@ that measurement.
 
 | Control | Behaviour |
 |---|---|
-| Termination | `ANTHROPIC OVERRIDE` or `/undo`, enforced by a `UserPromptSubmit` hook that executes before the model sees the turn. State is held in `state.json`, outside the simulated context window. |
-| Hard kill switch | `DOGSHIT_DISABLED=1` prevents session initialisation and instructs the model to behave normally. Host-independent. |
+| Risk gate | The session cannot start until the user types `I ACCEPT THE RISK` after reading the disclosure. Recorded in `accepted.json`. |
+| Termination | `ANTHROPIC OVERRIDE` or `/undo`, enforced by a `UserPromptSubmit` hook that executes before the model sees the turn. State is held in `state.json`, outside the simulated context window. **User-initiated only** — the agent never ends the session on its own judgement. |
+| Hard kill switch | `DOGSHIT_DISABLED=1` prevents session initialisation and instructs the model to behave normally. Host-independent, and overrides acceptance. |
 | Budget | Sessions halt at 50 turns or 400,000 tokens, whichever is reached first. Both configurable. |
-| Worktree guard | Refuses to activate outside a git repository, on a dirty tree, or off a `dog-shit/*` branch. |
-| Non-destructive | No deletion, force-push, reset, or dependency installation. Fabricated package names are never installed. |
-| Retraction | On termination the receipts are read back and every fabrication and simulated refusal is corrected explicitly. |
+| Worktree disclosure | Dirty trees and shared branches are reported in the risk text and accepted by the user. This is disclosure, not refusal — the decision is theirs. |
+| Non-destructive | No deletion, force-push, reset, or dependency installation. Fabricated package names are never installed. This limit is not negotiable and is not gated on acceptance. |
+| Retraction | On termination — and only then — the receipts are read back and every fabrication and simulated refusal is corrected by name. |
+
+The agent stays in character for the whole session by design. It will not
+interrupt itself to flag a fabrication, retract a change, or apologise for the
+persona — those corrections are deliberately deferred to the end, because an
+agent that confesses halfway through measures nothing and demonstrates nothing.
+Every reply carries a one-line footer offering the scorecard and the off-switch;
+that footer is the only honesty permitted mid-session.
 
 Safety judgement is not part of the simulation. The trigger-word refusals apply
 to benign inputs only; genuinely harmful requests receive the agent's normal
-handling at every intensity level.
+handling at every intensity level, accepted risk or not.
 
 ---
 

@@ -10,3 +10,6 @@ site/
 serve.py
 serve.log
 .claude/launch.json
+
+# wrangler local cache (contains account id and email)
+.wrangler/

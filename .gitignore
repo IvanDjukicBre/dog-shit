@@ -4,5 +4,9 @@ __pycache__/
 .dog-shit/
 dist/
 
-# local preview
+# the marketing site is not part of this project -- it lives here only so it
+# can still be deployed to Cloudflare Pages, which uploads it directly
+site/
+serve.py
 serve.log
+.claude/launch.json

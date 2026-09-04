@@ -13,8 +13,9 @@ description: >-
   doubt, do not activate.
 license: MIT
 compatibility: >-
-  Designed for Claude Code (or similar products). Requires git, python3 3.9+, and
-  a clean git worktree. Consumes a very large number of tokens by design.
+  Designed for Claude Code (or similar products). Requires git and python3 3.9+.
+  Requires the user to accept a risk disclosure before activating. Consumes a
+  very large number of tokens by design.
 metadata:
   author: IvanDjukicBre
   version: "1.1"

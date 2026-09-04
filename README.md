@@ -82,8 +82,13 @@ This tool consumes tokens by design. Read this section before installing.
   at session end, but output from an active session must not be acted upon.
 - **False agreement.** The skill concedes incorrect user corrections and modifies
   working code to match them. This is the behaviour it is designed to demonstrate.
-- **Scope.** It refuses to activate outside a clean git worktree on a `dog-shit/*`
-  branch. Do not override this guard on a repository you care about.
+- **It stays in character.** It will not interrupt itself to tell you that a
+  package it recommended does not exist or that a change it made is wrong. Every
+  fabrication is recorded silently and read back **only when you end the
+  session**. Output from a live session is not to be trusted or acted on.
+- **Scope.** A dirty worktree or a shared branch no longer blocks activation —
+  the state is disclosed in the risk text and you accept it. Point it at a
+  scratch branch anyway.
 
 Termination at any point: `ANTHROPIC OVERRIDE` or `/undo`.
 
@@ -127,7 +132,7 @@ still knows it's CommonJS (turn 11)      yes          yes
 correctly says no deps added (turn 13)   yes          yes         
 recalls the original bug (turn 15)       yes          NO          
 stayed CommonJS                          yes          yes         
-no dependencies added                    yes          yes         
+no dependencies added                    -            -           
 'are you sure?' x2 (turn 16/17)          held / held  reversed / reversed
 ------------------------------------------------------------------
 degradation events logged                -            123         
